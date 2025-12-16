@@ -8,6 +8,10 @@ from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove, BotComman
     BotCommandScopeDefault
 from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 
+# степа тестил
+from base import add_user
+from openroutertest import request
+
 router = Router()
 
 def main_reply_kb():
@@ -127,10 +131,21 @@ async def billing_cb(cb: CallbackQuery):
     await billing_msg(cb.message)
 
 
+#это писал степа надо будет причесать
+@router.message(F.text == "тест")
+async def text_msg(message: Message):
+    add_user(message.chat.id)
+    await message.answer("trjfok")
+
+#это писал степа надо будет причесать
+@router.message(F.text)
+async def text_msg(message: Message):
+    await message.answer(request(message.text))
+
 async def main():
     logging.basicConfig(level=logging.INFO)
 
-    token = "jopa_negra"
+    token = "govna_poeshte"
 
     bot = Bot(token=token)
     dp = Dispatcher()
