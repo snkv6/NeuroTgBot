@@ -36,5 +36,5 @@ async def cansel_setting_role_cb(cb: CallbackQuery, state: FSMContext):
 @router.message(role_form.waiting_text)
 async def special_handler(message: Message, state: FSMContext):
     await state.clear()
-    update_role(message.from_user.id, message.text)
+    await update_role(message.from_user.id, message.text)
     await message.answer("Роль выбрана!")

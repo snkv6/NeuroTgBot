@@ -37,6 +37,10 @@ class User(Base):
 
 SessionLocal = async_sessionmaker(engine, expire_on_commit=False)
 
+async def init_db():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
 async def get_user(session, telegram_id: int) -> User | None:
     query = await session.execute(select(User).where(User.telegram_id == telegram_id))
     return query.scalar_one_or_none()
@@ -126,10 +130,9 @@ async def check_premium(telegram_id):
     async with SessionLocal() as session:
         async with session.begin():
             user = await get_user(session, telegram_id)
-            if user:
-                return user.premium_until < datetime.utcnow()
-            else:
+            if not user or not user.premium_until:
                 return False
+            return user.premium_until > datetime.utcnow()
 
 async def get_remaining_premium_days(telegram_id):
     async with SessionLocal() as session:
@@ -142,6 +145,24 @@ async def get_remaining_premium_days(telegram_id):
                 return remaining
             else:
                 return 0
+
+async def get_model(telegram_id):
+    async with SessionLocal() as session:
+        async with session.begin():
+            user = await get_user(session, telegram_id)
+            if user:
+                return user.cur_model
+            else:
+                return None
+
+async def get_role(telegram_id):
+    async with SessionLocal() as session:
+        async with session.begin():
+            user = await get_user(session, telegram_id)
+            if user:
+                return user.role
+            else:
+                return None
 
 #
 # def get_all_tg_ids():

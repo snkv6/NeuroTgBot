@@ -2,17 +2,25 @@ import asyncio
 import logging
 import os
 
+from dotenv import load_dotenv
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 
 from routers import router
 from features.menu.setup import setup_bot
+from base import init_db
 
 
 async def main():
     logging.basicConfig(level=logging.INFO)
 
-    token = "."
+    await init_db()
+
+    load_dotenv("keys/.env_telegram_bot")
+
+    token = os.getenv("TELEGRAM_BOT_TOKEN")
+    if not token:
+        raise RuntimeError("TELEGRAM_BOT_TOKEN is not set")
     bot = Bot(token=token)
 
     dp = Dispatcher(storage=MemoryStorage())
