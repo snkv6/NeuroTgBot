@@ -12,7 +12,7 @@ from features.menu.setup import setup_bot
 async def main():
     logging.basicConfig(level=logging.INFO)
 
-    token = "8570005846:AAFLN9CUao0UsPdjqtx6v4COwtSWuYXQjgg"
+    token = "."
     bot = Bot(token=token)
 
     dp = Dispatcher(storage=MemoryStorage())
