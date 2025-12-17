@@ -16,7 +16,7 @@ class User(Base):
     premium_until = Column(DateTime(timezone=True))
     cur_model = Column(String)
     role = Column(String, nullable=True)
-    request_cnt = Column(MutableDict.as_mutable(JSON), default=dict, nullable=False)
+    request_cnt = Column(Integer)
     context = Column(MutableList.as_mutable(JSON), default=list, nullable=False)
 
 
@@ -63,40 +63,58 @@ def update_premium(telegram_id):
     finally:
         session.close()
 
-def update_role(telegram_id):
+def update_role(telegram_id, role):
     session = SessionLocal()
     try:
         with session.begin():
             user = get_user(session, telegram_id)
             if user:
-                user.premium_until = datetime.now(timezone.utc) + timedelta(days=30)
+                user.role = role
                 return True
             else:
                 return False
     finally:
         session.close()
 
-#
-# def change_messages_recieving(telegram_id):
-#     Session = sessionmaker(bind=engine)
-#     session = Session()
-#     session.query(User).filter(User.telegram_id == telegram_id).first().messages_recieving = not session.query(User).filter(User.telegram_id == telegram_id).first().messages_recieving
-#     session.commit()
-#     return
-#
-# def get_grade(telegram_id):
-#     Session = sessionmaker(bind=engine)
-#     session = Session()
-#     data = session.query(User).filter(User.telegram_id == telegram_id).first().grade
-#     session.commit()
-#     return data
-#
-# def get_messages_recieving(telegram_id):
-#     Session = sessionmaker(bind=engine)
-#     session = Session()
-#     data = session.query(User).filter(User.telegram_id == telegram_id).first().messages_recieving
-#     session.commit()
-#     return data
+
+def update_model(telegram_id, model):
+    session = SessionLocal()
+    try:
+        with session.begin():
+            user = get_user(session, telegram_id)
+            if user:
+                user.model = model
+                return True
+            else:
+                return False
+    finally:
+        session.close()
+
+def update_request_cnt(telegram_id):
+    session = SessionLocal()
+    try:
+        with session.begin():
+            user = get_user(session, telegram_id)
+            if user:
+                user.request_cnt += 1
+                return True
+            else:
+                return False
+    finally:
+        session.close()
+
+def update_context(telegram_id, role, text):
+    session = SessionLocal()
+    try:
+        with session.begin():
+            user = get_user(session, telegram_id)
+            if user:
+                user.context.append({"role": role, "content": text})
+                return True
+            else:
+                return False
+    finally:
+        session.close()
 #
 # def delete_account(telegram_id):
 #     Session = sessionmaker(bind=engine)
