@@ -1,18 +1,22 @@
 import os
 import asyncio
 import logging
+import base
 
 from aiogram import Bot, Dispatcher, F, Router
 from aiogram.filters import CommandStart, Command
 from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove, BotCommand, MenuButtonCommands, \
     BotCommandScopeDefault
 from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
+from aiogram.fsm.state import StatesGroup, State
+from aiogram.fsm.context import FSMContext
 
 # степа тестил
 from base import add_user, update_premium, update_context
 from openroutertest import request
 
 router = Router()
+
 
 def main_reply_kb():
     kb = ReplyKeyboardBuilder()
@@ -29,7 +33,7 @@ def actions_inline_kb():
     kb = InlineKeyboardBuilder()
     kb.button(text="Помощь 🫂", callback_data="help")
     kb.button(text="Посмотреть профиль ℹ️", callback_data="profile")
-    kb.button(text="Задать роль 📝", callback_data="role")
+    kb.button(text="Выбрать роль 📝", callback_data="role")
     kb.button(text="Сменить модель 👾", callback_data="model")
     kb.button(text="План / оплата 💳", callback_data="billing")
     kb.adjust(2, 2, 1)
@@ -43,6 +47,7 @@ async def start(message: Message):
         "Напиши запрос обычным текстом — я отвечу.\n",
         reply_markup=main_reply_kb())
     await message.answer("Настройки и быстрые действия:", reply_markup=actions_inline_kb())
+
 
 @router.message(Command("help"))
 @router.message(F.text == "Помощь 🫂")
@@ -58,16 +63,18 @@ async def help_msg(message: Message):
         "• «Сделай краткий конспект: …»\n\n"
         "Команды:\n"
         "/start — запуск и меню\n"
-        "/profile — профиль/настройки\n"
+        "/profile — профиль\n"
         "/role — выбрать роль\n"
         "/model — выбрать модель\n"
-        "/billing — план/оплата\n"
+        "/billing — оплата\n"
     )
+
 
 @router.callback_query(F.data == "help")
 async def help_cb(cb: CallbackQuery):
     await cb.answer()
     await help_msg(cb.message)
+
 
 @router.message(Command("profile"))
 @router.message(F.text == "Посмотреть профиль ℹ️")
@@ -80,25 +87,52 @@ async def profile_msg(message: Message):
         "Подписка:"
     )
 
+
 @router.callback_query(F.data == "profile")
 async def profile_cb(cb: CallbackQuery):
     await cb.answer()
     await profile_msg(cb.message)
 
 
+class form_for_setting_role(StatesGroup):
+    waiting_text = State()
+
+
+def cansel_setting_role_kb():
+    kb = InlineKeyboardBuilder()
+    kb.button(text="Отмена ❌", callback_data="cansel_setting_role")
+    kb.adjust(1)
+    return kb.as_markup()
+
+
 @router.message(Command("role"))
-@router.message(F.text == "Задать роль 📝")
-async def role_msg(message: Message):
-    # TODO: реализовать
+@router.message(F.text == "Выбрать роль 📝")
+async def role_msg(message: Message, state: FSMContext):
+    await state.set_state(form_for_setting_role.waiting_text)
     await message.answer(
-        "Задать роль\n\n"
-        "Здесь можно задать роль, которую будет играть ИИ-агент"
+        "Выбрать роль\n\n"
+        "Здесь можно выбрать роль, которую будет играть ИИ-агент",
+        reply_markup=cansel_setting_role_kb()
     )
+
 
 @router.callback_query(F.data == "role")
 async def role_cb(cb: CallbackQuery):
     await cb.answer()
     await role_msg(cb.message)
+
+
+@router.callback_query(F.data == "cansel_setting_role")
+async def cansel_setting_role_cb(cb: CallbackQuery, state: FSMContext):
+    await state.clear()
+    await cb.message.answer("Отменена выбора роли")
+
+
+@router.message(form_for_setting_role.waiting_text)
+async def special_handler(message: Message, state: FSMContext):
+    await state.clear()
+    await base.update_role(message.from_user.id, message.text)
+    await message.answer("Роль выбрана!")
 
 
 @router.message(Command("model"))
@@ -109,6 +143,7 @@ async def model_msg(message: Message):
         "Сменить модель\n\n"
         "Доступные модели:\n"
     )
+
 
 @router.callback_query(F.data == "model")
 async def model_cb(cb: CallbackQuery):
@@ -125,34 +160,39 @@ async def billing_msg(message: Message):
         "Тут будет выбор плана и оплата.\n"
     )
 
+
 @router.callback_query(F.data == "billing")
 async def billing_cb(cb: CallbackQuery):
     await cb.answer()
     await billing_msg(cb.message)
 
 
-#это писал степа надо будет причесать
+# это писал степа надо будет причесать
 @router.message(F.text == "тест")
 async def text_msg(message: Message):
     add_user(message.chat.id)
     await message.answer("trjfok")
 
-#это писал степа надо будет причесать
+
+# это писал степа надо будет причесать
 @router.message(F.text == "конт")
 async def text_msg(message: Message):
     update_context(message.chat.id, "user", message.text)
     await message.answer("trjfok")
 
-#это писал степа надо будет причесать
+
+# это писал степа надо будет причесать
 @router.message(F.text == "прем")
 async def text_msg(message: Message):
     update_premium(message.chat.id)
     await message.answer("trjfok")
 
-#это писал степа надо будет причесать
+
+# это писал степа надо будет причесать
 @router.message(F.text)
 async def text_msg(message: Message):
     await message.answer(request(message.text))
+
 
 async def main():
     logging.basicConfig(level=logging.INFO)
@@ -167,7 +207,7 @@ async def main():
         BotCommand(command="start", description="Запуск"),
         BotCommand(command="help", description="Помощь"),
         BotCommand(command="profile", description="Профиль"),
-        BotCommand(command="role", description="Задать роль"),
+        BotCommand(command="role", description="Выбрать роль"),
         BotCommand(command="model", description="Сменить роль"),
         BotCommand(command="billing", description="Оплата")
     ],
