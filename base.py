@@ -122,6 +122,27 @@ async def delete_context(telegram_id):
             else:
                 return False
 
+async def check_premium(telegram_id):
+    async with SessionLocal() as session:
+        async with session.begin():
+            user = await get_user(session, telegram_id)
+            if user:
+                return user.premium_until < datetime.utcnow()
+            else:
+                return False
+
+async def get_remaining_premium_days(telegram_id):
+    async with SessionLocal() as session:
+        async with session.begin():
+            user = await get_user(session, telegram_id)
+            if user:
+                remaining = (user.premium_until - datetime.utcnow()).days
+                if remaining < 0:
+                    remaining = 0
+                return remaining
+            else:
+                return 0
+
 #
 # def get_all_tg_ids():
 #     Session = sessionmaker(bind=engine)
