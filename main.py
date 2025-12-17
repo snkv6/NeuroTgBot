@@ -9,7 +9,7 @@ from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove, BotComman
 from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 
 # степа тестил
-from base import add_user
+from base import add_user, update_premium
 from openroutertest import request
 
 router = Router()
@@ -135,6 +135,12 @@ async def billing_cb(cb: CallbackQuery):
 @router.message(F.text == "тест")
 async def text_msg(message: Message):
     add_user(message.chat.id)
+    await message.answer("trjfok")
+
+#это писал степа надо будет причесать
+@router.message(F.text == "прем")
+async def text_msg(message: Message):
+    update_premium(message.chat.id)
     await message.answer("trjfok")
 
 #это писал степа надо будет причесать
