@@ -41,14 +41,24 @@ async def init_db():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
-async def get_user(session, telegram_id: int) -> User | None:
+async def get_user_auxiliary(session, telegram_id: int) -> User | None:
     query = await session.execute(select(User).where(User.telegram_id == telegram_id))
     return query.scalar_one_or_none()
+
+async def get_user(telegram_id: int) -> User | None:
+    async with SessionLocal() as session:
+        async with session.begin():
+            query = await session.execute(select(User).where(User.telegram_id == telegram_id))
+            user = query.scalar_one_or_none()
+            if user:
+                return user
+            else:
+                return False
 
 async def add_user(telegram_id):
     async with SessionLocal() as session:
         async with session.begin():
-            user = await get_user(session, telegram_id)
+            user = await get_user_auxiliary(session, telegram_id)
             if user:
                 return False
             else:
@@ -59,7 +69,7 @@ async def add_user(telegram_id):
 async def update_premium(telegram_id):
     async with SessionLocal() as session:
         async with session.begin():
-            user = await get_user(session, telegram_id)
+            user = await get_user_auxiliary(session, telegram_id)
             if user:
                 cur_time = datetime.utcnow()
                 if user.premium_until < cur_time:
@@ -74,7 +84,7 @@ async def update_premium(telegram_id):
 async def update_role(telegram_id, role):
     async with SessionLocal() as session:
         async with session.begin():
-            user = await get_user(session, telegram_id)
+            user = await get_user_auxiliary(session, telegram_id)
             if user:
                 user.role = role
                 return True
@@ -86,7 +96,7 @@ async def update_role(telegram_id, role):
 async def update_model(telegram_id, model):
     async with SessionLocal() as session:
         async with session.begin():
-            user = await get_user(session, telegram_id)
+            user = await get_user_auxiliary(session, telegram_id)
             if user:
                 user.cur_model = model
                 return True
@@ -97,7 +107,7 @@ async def update_model(telegram_id, model):
 async def update_request_cnt(telegram_id):
     async with SessionLocal() as session:
         async with session.begin():
-            user = await get_user(session, telegram_id)
+            user = await get_user_auxiliary(session, telegram_id)
             if user:
                 user.request_cnt += 1
                 return True
@@ -108,7 +118,7 @@ async def update_request_cnt(telegram_id):
 async def update_context(telegram_id, role, text):
     async with SessionLocal() as session:
         async with session.begin():
-            user = await get_user(session, telegram_id)
+            user = await get_user_auxiliary(session, telegram_id)
             if user:
                 user.context.append({"role": role, "content": text})
                 return True
@@ -119,7 +129,7 @@ async def update_context(telegram_id, role, text):
 async def delete_context(telegram_id):
     async with SessionLocal() as session:
         async with session.begin():
-            user = await get_user(session, telegram_id)
+            user = await get_user_auxiliary(session, telegram_id)
             if user:
                 user.context.clear()
                 return True
@@ -129,7 +139,7 @@ async def delete_context(telegram_id):
 async def check_premium(telegram_id):
     async with SessionLocal() as session:
         async with session.begin():
-            user = await get_user(session, telegram_id)
+            user = await get_user_auxiliary(session, telegram_id)
             if not user or not user.premium_until:
                 return False
             return user.premium_until > datetime.utcnow()
@@ -137,7 +147,7 @@ async def check_premium(telegram_id):
 async def get_remaining_premium_days(telegram_id):
     async with SessionLocal() as session:
         async with session.begin():
-            user = await get_user(session, telegram_id)
+            user = await get_user_auxiliary(session, telegram_id)
             if user:
                 remaining = (user.premium_until - datetime.utcnow()).days
                 if remaining < 0:
@@ -149,7 +159,7 @@ async def get_remaining_premium_days(telegram_id):
 async def get_model(telegram_id):
     async with SessionLocal() as session:
         async with session.begin():
-            user = await get_user(session, telegram_id)
+            user = await get_user_auxiliary(session, telegram_id)
             if user:
                 return user.cur_model
             else:
@@ -158,7 +168,7 @@ async def get_model(telegram_id):
 async def get_role(telegram_id):
     async with SessionLocal() as session:
         async with session.begin():
-            user = await get_user(session, telegram_id)
+            user = await get_user_auxiliary(session, telegram_id)
             if user:
                 return user.role
             else:

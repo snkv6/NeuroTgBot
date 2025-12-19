@@ -12,5 +12,5 @@ router = Router()
 
 @router.message(StateFilter(None), F.text, ~F.text.startswith("/"), ~F.text.in_(BTN_TEXTS))
 async def chat(message: Message):
-    answer = await asyncio.to_thread(request, message.text)
+    answer = await request(message.chat.id, message.text)
     await message.answer(answer)
