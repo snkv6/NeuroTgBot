@@ -1,4 +1,4 @@
 __pycache__/
 *.pyc
-users.db
+database/database.db
 keys/.env*

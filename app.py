@@ -8,7 +8,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 
 from routers import router
 from features.menu.setup import setup_bot
-from base import init_db
+from database.base import init_db
 
 
 async def main():
@@ -16,7 +16,7 @@ async def main():
 
     await init_db()
 
-    load_dotenv("keys/.env_telegram_bot")
+    load_dotenv("keys/.env")
 
     token = os.getenv("TELEGRAM_BOT_TOKEN")
     if not token:

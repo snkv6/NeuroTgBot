@@ -5,9 +5,9 @@
 import os
 from dotenv import load_dotenv
 from openai import AsyncOpenAI
-from base import get_user, update_context
+from database.users import get_user, update_context
 
-load_dotenv("keys/.env_telegram_bot")
+load_dotenv("keys/.env")
 
 key = os.getenv("OPENROUTER_API_KEY")
 

@@ -2,21 +2,30 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 
 BTN_HELP = "Помощь 🫂"
 BTN_PROFILE = "Посмотреть профиль ℹ️"
-BTN_ROLE = "Задать роль 📝"
+BTN_ROLE = "Задать / удалить роль 📝"
 BTN_MODEL = "Сменить модель 👾"
 BTN_BILLING = "План / оплата 💳"
+
 BTN_CANSEL_ROLE = "Отмена ❌"
+BTN_DELETE_ROLE = "Удалить роль ⛔"
+
+BTN_PREMIUM_30D = "30 дней"
+BTN_PREMIUM_365D = "365 дней"
+
+BTN_TEXTS = {BTN_HELP, BTN_PROFILE, BTN_ROLE, BTN_MODEL, BTN_BILLING}
 
 CB_HELP = "help"
 CB_PROFILE = "profile"
 CB_ROLE = "role"
 CB_MODEL = "model"
 CB_BILLING = "billing"
+
 CB_CANSEL_ROLE = "cansel_role"
+CB_DELETE_ROLE = "delete_role"
 
-BTN_TEXTS = {BTN_HELP, BTN_PROFILE, BTN_ROLE, BTN_MODEL, BTN_BILLING, BTN_CANSEL_ROLE}
-CB_TEXTS = {CB_HELP, CB_PROFILE, CB_ROLE, CB_MODEL, CB_BILLING, CB_CANSEL_ROLE}
-
+CB_PREMIUM_START = "buy:"
+CB_PREMIUM_30D = "30"
+CB_PREMIUM_365D = "365"
 
 def main_reply_kb():
     kb = ReplyKeyboardBuilder()
@@ -36,11 +45,20 @@ def actions_inline_kb():
     kb.button(text=BTN_ROLE, callback_data=CB_ROLE)
     kb.button(text=BTN_MODEL, callback_data=CB_MODEL)
     kb.button(text=BTN_BILLING, callback_data=CB_BILLING)
-    kb.adjust(2, 2, 1)
+    kb.adjust(1, 1, 1, 1, 1)
     return kb.as_markup()
 
 
-def cancel_role_kb():
+def special_role_inline_kb():
     kb = InlineKeyboardBuilder()
     kb.button(text=BTN_CANSEL_ROLE, callback_data=CB_CANSEL_ROLE)
+    kb.button(text=BTN_DELETE_ROLE, callback_data=CB_DELETE_ROLE)
+    kb.adjust(2)
+    return kb.as_markup()
+
+def premium_options_inline_kb():
+    kb = InlineKeyboardBuilder()
+    kb.button(text=BTN_PREMIUM_30D, callback_data=CB_PREMIUM_START+CB_PREMIUM_30D)
+    kb.button(text=BTN_PREMIUM_365D, callback_data=CB_PREMIUM_START+CB_PREMIUM_365D)
+    kb.adjust(2)
     return kb.as_markup()

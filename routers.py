@@ -5,7 +5,7 @@ from features.help import router as help_router
 from features.profile import router as profile_router
 from features.role import router as role_router
 from features.model import router as model_router
-from features.billing import router as billing_router
+from features.billing_service.billing import router as billing_router
 from features.request import router as chat_router
 
 router = Router()

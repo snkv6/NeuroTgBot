@@ -1,10 +1,11 @@
 from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery
+from aiogram.exceptions import TelegramBadRequest
 
 from features.menu.keyboards import BTN_PROFILE, CB_PROFILE
 from features.menu.setup import CMD_PROFILE
-from base import get_remaining_premium_days, check_premium, get_model, get_role
+from database.users import get_remaining_premium_days, check_premium, get_model, get_role
 
 router = Router()
 
@@ -34,4 +35,8 @@ async def profile_msg(message: Message):
 @router.callback_query(F.data == CB_PROFILE)
 async def profile_cb(cb: CallbackQuery):
     await cb.answer()
+    try:
+        await cb.message.delete()
+    except TelegramBadRequest:
+        pass
     await profile_msg(cb.message)

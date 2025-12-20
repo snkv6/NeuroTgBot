@@ -3,7 +3,7 @@ from aiogram.filters import CommandStart
 from aiogram.types import Message
 
 from features.menu.keyboards import main_reply_kb, actions_inline_kb
-from base import add_user
+from database.users import add_user
 
 router = Router()
 

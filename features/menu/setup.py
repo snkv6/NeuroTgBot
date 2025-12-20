@@ -17,7 +17,7 @@ async def setup_bot(bot: Bot) -> None:
             BotCommand(command=CMD_START, description="Запуск"),
             BotCommand(command=CMD_HELP, description="Помощь"),
             BotCommand(command=CMD_PROFILE, description="Профиль"),
-            BotCommand(command=CMD_ROLE, description="Выбрать роль"),
+            BotCommand(command=CMD_ROLE, description="Выбрать / удалить роль"),
             BotCommand(command=CMD_MODEL, description="Сменить модель"),
             BotCommand(command=CMD_BILLING, description="Оплата"),
         ],
