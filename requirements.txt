@@ -6,3 +6,4 @@ SQLAlchemy
 aiosqlite
 yookassa
 openai
+asyncpg
