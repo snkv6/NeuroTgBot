@@ -21,7 +21,7 @@ class User(Base):
 
     def __init__(self, telegram_id):
         self.telegram_id = telegram_id
-        self.premium_until = datetime(1970, 1, 1, tzinfo=timezone.utc)
+        self.premium_until = datetime(1970, 1, 1)
         self.cur_model = "gpt-4o-mini"
         self.role = None
         self.request_cnt = 0
