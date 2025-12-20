@@ -9,6 +9,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from routers import router
 from features.menu.setup import setup_bot
 from database.base import init_db
+from features.billing_service.webhook_server import run_webhook_server
 
 
 async def main():
@@ -27,7 +28,10 @@ async def main():
     dp.include_router(router)
 
     await setup_bot(bot)
-    await dp.start_polling(bot)
+    await asyncio.gather(
+        dp.start_polling(bot),
+        run_webhook_server(),
+    )
 
 
 if __name__ == "__main__":

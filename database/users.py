@@ -19,13 +19,13 @@ class User(Base):
     request_cnt = Column(Integer, nullable=False, default=0)
     context = Column(MutableList.as_mutable(JSON), default=list, nullable=False)
 
-    # def __init__(self, telegram_id):
-    #     self.telegram_id = telegram_id
-    #     self.premium_until = datetime(1970, 1, 1, tzinfo=timezone.utc)
-    #     self.cur_model = "gpt-4o-mini"
-    #     self.role = None
-    #     self.request_cnt = 0
-    #     self.context = []
+    def __init__(self, telegram_id):
+        self.telegram_id = telegram_id
+        self.premium_until = datetime(1970, 1, 1, tzinfo=timezone.utc)
+        self.cur_model = "gpt-4o-mini"
+        self.role = None
+        self.request_cnt = 0
+        self.context = []
 
     # def __repr__(self):
     #     return "<User('%s', '%s', '%s')>" % (self.telegram_id, self.grade, self.messages_recieving)

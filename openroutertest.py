@@ -10,6 +10,8 @@ from database.users import get_user, update_context
 load_dotenv("keys/.env")
 
 key = os.getenv("OPENROUTER_API_KEY")
+if not key:
+    raise Exception("OPENROUTER_API_KEY environment variable not set")
 
 client = AsyncOpenAI(
     api_key=key,

@@ -45,3 +45,7 @@ async def yookassa_webhook(request: Request):
         await update_premium(p.telegram_id, p.duration)
 
     return {"ok": True}
+
+@app.get("/")
+async def root():
+    return {"ok": True}
