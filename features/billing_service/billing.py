@@ -17,8 +17,8 @@ router = Router()
 @router.message(Command(CMD_BILLING))
 @router.message(F.text == BTN_BILLING)
 async def billing_msg(message: Message):
-    await message.answer("План / оплата\n\n"
-                         "Выберите план оплаты",
+    await message.answer("План / оплата 💳\n\n"
+                         "Выберите план подписки",
                          reply_markup=premium_options_inline_kb())
 
 

@@ -17,7 +17,7 @@ router = Router()
 async def role_msg(message: Message, state: FSMContext):
     await state.set_state(role_form.waiting_text)
     await message.answer(
-        "Выбрать роль\n\n"
+        "Выбрать роль 📝\n\n"
         "Здесь можно выбрать роль, которую будет играть ИИ-агент\n"
         "Чтобы удалить ранее выбранную роль просто нажми на кнопку",
         reply_markup=special_role_inline_kb()

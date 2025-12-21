@@ -8,6 +8,7 @@ from yookassa import Payment
 from database.payments import mark_paid
 from database.users import update_premium
 from features.billing_service.yookassa_configuration import configure_yookassa
+from bot_instance import bot
 
 load_dotenv("keys/.env")
 
@@ -43,9 +44,17 @@ async def yookassa_webhook(request: Request):
     p = await mark_paid(order_id)
     if p and p.paid:
         await update_premium(p.telegram_id, p.duration)
+        await bot.send_message(
+            p.telegram_id,
+            f"✅ Оплата прошла!\nПремиум активирован на {p.duration} дней."
+        )
 
     return {"ok": True}
 
 @app.get("/")
 async def root():
     return {"ok": True}
+
+@app.on_event("shutdown")
+async def shutdown():
+    await bot.session.close()

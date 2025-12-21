@@ -25,7 +25,7 @@ async def profile_msg(message: Message):
     else:
         premium = "нет премиум подписки"
     await message.answer(
-        "Ваш Профиль\n\n"
+        "Ваш Профиль ℹ️\n\n"
         f"Роль: {role}\n"
         f"Модель: {model}\n"
         f"Подписка: {premium}"

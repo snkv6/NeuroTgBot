@@ -7,6 +7,7 @@ from features.role import router as role_router
 from features.model import router as model_router
 from features.billing_service.billing import router as billing_router
 from features.request import router as chat_router
+from features.delete_context import router as delete_context_router
 
 router = Router()
 router.include_router(start_router)
@@ -16,3 +17,4 @@ router.include_router(role_router)
 router.include_router(model_router)
 router.include_router(billing_router)
 router.include_router(chat_router)
+router.include_router(delete_context_router)

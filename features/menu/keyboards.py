@@ -5,7 +5,7 @@ BTN_PROFILE = "Посмотреть профиль ℹ️"
 BTN_ROLE = "Задать / удалить роль 📝"
 BTN_MODEL = "Сменить модель 👾"
 BTN_BILLING = "План / оплата 💳"
-BTN_DELETE_CONTEXT = "Удалить текущий контекст"
+BTN_DELETE_CONTEXT = "Удалить текущий контекст 🔄"
 
 BTN_CANSEL_ROLE = "Отмена ❌"
 BTN_DELETE_ROLE = "Удалить роль ⛔"
@@ -13,13 +13,14 @@ BTN_DELETE_ROLE = "Удалить роль ⛔"
 BTN_PREMIUM_30D = "30 дней"
 BTN_PREMIUM_365D = "365 дней"
 
-BTN_TEXTS = {BTN_HELP, BTN_PROFILE, BTN_ROLE, BTN_MODEL, BTN_BILLING}
+BTN_TEXTS = {BTN_HELP, BTN_PROFILE, BTN_ROLE, BTN_MODEL, BTN_BILLING, BTN_DELETE_CONTEXT}
 
 CB_HELP = "help"
 CB_PROFILE = "profile"
 CB_ROLE = "role"
 CB_MODEL = "model"
 CB_BILLING = "billing"
+CB_DELETE_CONTEXT = "delete_context"
 
 CB_CANSEL_ROLE = "cansel_role"
 CB_DELETE_ROLE = "delete_role"
@@ -35,7 +36,8 @@ def main_reply_kb():
     kb.button(text=BTN_ROLE)
     kb.button(text=BTN_MODEL)
     kb.button(text=BTN_BILLING)
-    kb.adjust(2, 2, 1)
+    kb.button(text=BTN_DELETE_CONTEXT)
+    kb.adjust(2, 2, 2)
     return kb.as_markup(resize_keyboard=True)
 
 
@@ -46,7 +48,8 @@ def actions_inline_kb():
     kb.button(text=BTN_ROLE, callback_data=CB_ROLE)
     kb.button(text=BTN_MODEL, callback_data=CB_MODEL)
     kb.button(text=BTN_BILLING, callback_data=CB_BILLING)
-    kb.adjust(1, 1, 1, 1, 1)
+    kb.button(text=BTN_DELETE_CONTEXT, callback_data=CB_DELETE_CONTEXT)
+    kb.adjust(1, 1, 1, 1, 1, 1)
     return kb.as_markup()
 
 

@@ -10,19 +10,14 @@ from routers import router
 from features.menu.setup import setup_bot
 from database.base import init_db
 from features.billing_service.webhook_server import run_webhook_server
+from bot_instance import bot
 
+load_dotenv("keys/.env")
 
 async def main():
     logging.basicConfig(level=logging.INFO)
 
     await init_db()
-
-    load_dotenv("keys/.env")
-
-    token = os.getenv("TELEGRAM_BOT_TOKEN")
-    if not token:
-        raise RuntimeError("TELEGRAM_BOT_TOKEN is not set")
-    bot = Bot(token=token)
 
     dp = Dispatcher(storage=MemoryStorage())
     dp.include_router(router)

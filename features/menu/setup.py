@@ -7,8 +7,7 @@ CMD_PROFILE = "profile"
 CMD_ROLE = "role"
 CMD_MODEL = "model"
 CMD_BILLING = "billing"
-
-CMD_TEXTS = {CMD_START, CMD_HELP, CMD_PROFILE, CMD_ROLE, CMD_MODEL, CMD_BILLING}
+CMD_DELETE_CONTEXT = "delete_context"
 
 
 async def setup_bot(bot: Bot) -> None:
@@ -20,6 +19,7 @@ async def setup_bot(bot: Bot) -> None:
             BotCommand(command=CMD_ROLE, description="Выбрать / удалить роль"),
             BotCommand(command=CMD_MODEL, description="Сменить модель"),
             BotCommand(command=CMD_BILLING, description="Оплата"),
+            BotCommand(command=CMD_DELETE_CONTEXT, description="Удалить контекст")
         ],
         scope=BotCommandScopeDefault(),
     )

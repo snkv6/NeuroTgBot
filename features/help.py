@@ -12,7 +12,7 @@ router = Router()
 @router.message(Command(CMD_HELP))
 @router.message(F.text == BTN_HELP)
 async def help_msg(message: Message):
-    await message.answer("Помощь\n\n"
+    await message.answer("Помощь 🫂\n\n"
                          "• Просто напиши запрос обычным текстом — я отвечу.\n"
                          "• Можно просить: объяснить тему, написать/исправить код, идеи, конспект.\n\n"
                          "Команды:\n"
