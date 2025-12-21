@@ -1,7 +1,7 @@
 from datetime import datetime, timezone, timedelta
 
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
-from sqlalchemy import Column, Integer, String, Boolean, create_engine, DateTime, select
+from sqlalchemy import Column, Integer, String, Boolean, create_engine, DateTime, select, BigInteger
 from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy.types import JSON
@@ -12,7 +12,7 @@ from database.base import Base, SessionLocal
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True)
-    telegram_id = Column(Integer, unique=True)
+    telegram_id = Column(BigInteger, unique=True, nullable=False)
     premium_until = Column(DateTime)
     cur_model = Column(String)
     role = Column(String, nullable=True)
