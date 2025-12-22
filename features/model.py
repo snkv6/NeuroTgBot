@@ -14,10 +14,12 @@ router = Router()
 
 @router.message(Command(CMD_MODEL))
 @router.message(F.text == BTN_MODEL)
-async def model_msg(message: Message):
-    inline_kb = await model_inline_kb(message.from_user.id)
+async def model_msg(message: Message, telegram_id=None):
+    if telegram_id is None:
+        telegram_id = message.from_user.id
+    inline_kb = await model_inline_kb(telegram_id)
     text = "<b>Сменить модель 👾</b>Доступные модели:\n"
-    premium = await check_premium(message.from_user.id)
+    premium = await check_premium(telegram_id)
     if premium:
         s_p = "✅"
         s_np = ""
@@ -43,13 +45,13 @@ async def model_cb(cb: CallbackQuery):
         await cb.message.delete()
     except TelegramBadRequest:
         pass
-    await model_msg(cb.message)
+    await model_msg(cb.message, cb.from_user.id)
 
 @router.callback_query(F.data.startswith(CB_MODEL_START))
 async def change_model_cb_(cb: CallbackQuery):
     await cb.answer()
     model = cb.data.split(":")[1]
-    if MODELS[model].premium_only and not (await check_premium(model)):
+    if MODELS[model].premium_only and not (await check_premium(cb.from_user.id)):
         await cb.message.answer("Вы не можете выбрать эту модель без подписки")
     else:
         await update_model(cb.from_user.id, model)
