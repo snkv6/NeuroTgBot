@@ -7,6 +7,7 @@ from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy.types import JSON
 
 from database.base import Base, SessionLocal
+from config.test import MODELS
 
 
 class User(Base):
@@ -22,7 +23,7 @@ class User(Base):
     def __init__(self, telegram_id):
         self.telegram_id = telegram_id
         self.premium_until = datetime(1970, 1, 1)
-        self.cur_model = "GPT-5 mini"
+        self.cur_model = MODELS.keys()[0]
         self.role = None
         self.request_cnt = 0
         self.context = []
