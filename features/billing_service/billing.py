@@ -7,7 +7,7 @@ import os
 import asyncio
 from yookassa import Configuration, Payment
 
-from features.menu.keyboards import BTN_BILLING, CB_BILLING, CB_PREMIUM_START, premium_options_inline_kb
+from features.menu.keyboards import BTN_BILLING, CB_BILLING, CB_PREMIUM_START, CB_CANSEL_BILLING, premium_options_inline_kb
 from features.menu.setup import CMD_BILLING
 from features.billing_service.yookassa_configuration import configure_yookassa
 from database.payments import create_payment_order, attach_provider_payment_id, PLANS
@@ -32,6 +32,14 @@ async def billing_cb(cb: CallbackQuery):
     except TelegramBadRequest:
         pass
     await billing_msg(cb.message)
+
+@router.callback_query(F.data == CB_CANSEL_BILLING)
+async def cansel_billing(cb: CallbackQuery):
+    await cb.answer("Отменено")
+    try:
+        await cb.message.delete()
+    except TelegramBadRequest:
+        pass
 
 @router.callback_query(F.data.startswith(CB_PREMIUM_START))
 async def buy_plan(cb: CallbackQuery):

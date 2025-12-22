@@ -29,6 +29,7 @@ CB_DELETE_ROLE = "delete_role"
 CB_PREMIUM_START = "buy:"
 CB_PREMIUM_31D = "31"
 CB_PREMIUM_365D = "365"
+CB_CANSEL_BILLING = "cansel_billing"
 
 def main_reply_kb():
     kb = ReplyKeyboardBuilder()
@@ -65,6 +66,6 @@ def premium_options_inline_kb():
     kb = InlineKeyboardBuilder()
     kb.button(text=BTN_PREMIUM_30D, callback_data=CB_PREMIUM_START+CB_PREMIUM_31D)
     kb.button(text=BTN_PREMIUM_365D, callback_data=CB_PREMIUM_START+CB_PREMIUM_365D)
-    kb.button(text)
-    kb.adjust(2)
+    kb.button(text=BTN_CANSEL_BILLING, callback_data=CB_CANSEL_BILLING)
+    kb.adjust(2, 1)
     return kb.as_markup()
