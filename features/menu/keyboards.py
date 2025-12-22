@@ -76,7 +76,7 @@ def premium_options_inline_kb():
 
 async def model_inline_kb(telegram_id):
     kb = InlineKeyboardBuilder()
-    for model, model_data in MODELS:
+    for model, model_data in MODELS.items():
         simbol = ""
         if (not (await check_premium(telegram_id)) and model_data.premium_only):
             simbol = "🔒"
