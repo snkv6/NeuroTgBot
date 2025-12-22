@@ -6,7 +6,7 @@ from aiogram.exceptions import TelegramBadRequest
 
 from features.menu.keyboards import BTN_PROFILE, CB_PROFILE
 from features.menu.setup import CMD_PROFILE
-from database.users import get_remaining_premium_days, check_premium, get_model, get_role, get_cnt
+from database.users import get_remaining_premium_days, check_premium, get_model, get_role, get_request_cnt
 
 router = Router()
 
@@ -19,7 +19,7 @@ async def profile_msg(message: Message):
     if role is None:
         role = "нет роли"
     model = await get_model(tg_id)
-    cnt = await get_cnt(tg_id)
+    cnt = await get_request_cnt(tg_id)
     if model is None:
         model = "нет действующей модели"
         cnt = ""
