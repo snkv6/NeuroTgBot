@@ -7,7 +7,7 @@ from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy.types import JSON
 
 from database.base import Base, SessionLocal
-from config.test import MODELS
+from config.test import MODELS, PREMIUM_CONTEXT_LENGTH
 
 
 class User(Base):
@@ -113,7 +113,9 @@ async def update_context(telegram_id, role, text):
         async with session.begin():
             user = await get_user_auxiliary(session, telegram_id)
             if user:
-                user.context.append({"role": role, "content": text})
+                user.context = user.context[-PREMIUM_CONTEXT_LENGTH:] + [{"role": role, "content": text}]
+                if user.context and user.context[0]["role"] == "assistant":
+                    user.context = user.context[1:]
                 return True
             else:
                 return False
