@@ -10,8 +10,9 @@ BTN_DELETE_CONTEXT = "Удалить текущий контекст 🔄"
 BTN_CANSEL_ROLE = "Отмена ❌"
 BTN_DELETE_ROLE = "Удалить роль ⛔"
 
-BTN_PREMIUM_30D = "1 месяц за 1₽"
-BTN_PREMIUM_365D = "1 год за 2₽"
+BTN_PREMIUM_30D = "1 месяц за ₽599"
+BTN_PREMIUM_365D = "1 год за ₽1999"
+BTN_CANSEL_BILLING = "Отмена ❌"
 
 BTN_TEXTS = {BTN_HELP, BTN_PROFILE, BTN_ROLE, BTN_MODEL, BTN_BILLING, BTN_DELETE_CONTEXT}
 
@@ -64,5 +65,6 @@ def premium_options_inline_kb():
     kb = InlineKeyboardBuilder()
     kb.button(text=BTN_PREMIUM_30D, callback_data=CB_PREMIUM_START+CB_PREMIUM_31D)
     kb.button(text=BTN_PREMIUM_365D, callback_data=CB_PREMIUM_START+CB_PREMIUM_365D)
+    kb.button(text)
     kb.adjust(2)
     return kb.as_markup()

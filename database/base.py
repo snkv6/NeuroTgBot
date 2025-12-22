@@ -10,7 +10,7 @@ from sqlalchemy.orm import declarative_base
 
 load_dotenv("keys/.env")
 DATABASE_URL = os.getenv("DATABASE_URL_R")
-DATABASE_URL = DATABASE_URL.replace("postgresql://", "sqlite+asyncpg://")
+DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://")
 
 
 engine = create_async_engine(DATABASE_URL, echo=False)
