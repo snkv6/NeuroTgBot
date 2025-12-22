@@ -1,11 +1,10 @@
 from aiogram import Router, F
-from aiogram.enums import ParseMode
 from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
 from aiogram.exceptions import TelegramBadRequest
 
-from features.menu.keyboards import BTN_ROLE, CB_ROLE, CB_CANSEL_ROLE, CB_DELETE_ROLE, special_role_inline_kb
+from features.menu.keyboards import BTN_ROLE, CB_ROLE, CB_CANSEL_ROLE, CB_DELETE_ROLE, BTN_TEXTS, special_role_inline_kb
 from features.menu.setup import CMD_ROLE
 from features.states import role_form
 from database.users import update_role
@@ -18,11 +17,10 @@ router = Router()
 async def role_msg(message: Message, state: FSMContext):
     await state.set_state(role_form.waiting_text)
     await message.answer(
-        "<b>Выбрать роль 📝</b>\n\n"
+        "Выбрать роль 📝\n\n"
         "Здесь можно выбрать роль, которую будет играть ИИ-агент\n"
         "Чтобы удалить ранее выбранную роль просто нажми на кнопку",
-        reply_markup=special_role_inline_kb(),
-        parse_mode=ParseMode.HTML
+        reply_markup=special_role_inline_kb()
     )
 
 
@@ -52,8 +50,14 @@ async def delete_role_cb(cb: CallbackQuery, state: FSMContext):
     except TelegramBadRequest:
         pass
 
+@router.message(role_form.waiting_text, F.text.in_(BTN_TEXTS))
+async def btn_texts_in_role(message: Message, state: FSMContext):
+    await message.answer(
+        "Вы не можете выбрать эту роль.\n"
+        "Пожалуйста, введите роль обычным текстом или нажмите «Отмена»."
+    )
 
-@router.message(role_form.waiting_text)
+@router.message(role_form.waiting_text, F.text, ~F.text.in_(BTN_TEXTS))
 async def special_handler(message: Message, state: FSMContext):
     await state.clear()
     await update_role(message.from_user.id, message.text)
