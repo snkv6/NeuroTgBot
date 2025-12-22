@@ -4,7 +4,7 @@ from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery
 from aiogram.exceptions import TelegramBadRequest
 
-from features.menu.keyboards import BTN_MODEL, CB_MODEL, CB_MODEL_START, model_inline_kb
+from features.menu.keyboards import BTN_MODEL, CB_MODEL, CB_MODEL_START, CB_CANSEL_MODEL, model_inline_kb
 from features.menu.setup import CMD_MODEL
 from database.users import update_model, check_premium
 from config.test import MODELS
@@ -18,7 +18,7 @@ async def model_msg(message: Message, telegram_id=None):
     if telegram_id is None:
         telegram_id = message.from_user.id
     inline_kb = await model_inline_kb(telegram_id)
-    text = "<b>Сменить модель 👾</b>\n\nДоступные модели:\n"
+    text = "<b>Сменить модель 👾\n\nДоступные модели:</b>\n\n"
     premium = await check_premium(telegram_id)
     if premium:
         s_p = "✅"
@@ -27,7 +27,7 @@ async def model_msg(message: Message, telegram_id=None):
         s_p = "🔒"
         s_np = "✅"
     for model, model_data in MODELS.items():
-        text = text + model + ":\n"
+        text = text + "<b>" + model + "</b>:\n"
         if model_data.premium_only or premium:
             text = text + f"\t{s_p} Доступно {model_data.premium_per_day} запросов с подпиской\n"
         else:
@@ -61,3 +61,11 @@ async def change_model_cb_(cb: CallbackQuery):
         except TelegramBadRequest:
             pass
         await cb.message.answer("Модель изменена")
+
+@router.callback_query(F.data == CB_CANSEL_MODEL)
+async def cansel_model_cb(cb: CallbackQuery):
+    await cb.answer()
+    try:
+        await cb.message.delete()
+    except TelegramBadRequest:
+        pass

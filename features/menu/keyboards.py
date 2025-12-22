@@ -16,6 +16,8 @@ BTN_PREMIUM_30D = "1 месяц за ₽599"
 BTN_PREMIUM_365D = "1 год за ₽1999"
 BTN_CANSEL_BILLING = "Отмена ❌"
 
+BTN_CANSEL_MODEL = "Выход ❌"
+
 BTN_TEXTS = {BTN_HELP, BTN_PROFILE, BTN_ROLE, BTN_MODEL, BTN_BILLING, BTN_DELETE_CONTEXT}
 
 CB_HELP = "help"
@@ -34,6 +36,7 @@ CB_PREMIUM_365D = "365"
 CB_CANSEL_BILLING = "cansel_billing"
 
 CB_MODEL_START = "change_model:"
+CB_CANSEL_MODEL = "cansel_model"
 
 def main_reply_kb():
     kb = ReplyKeyboardBuilder()
@@ -83,6 +86,7 @@ async def model_inline_kb(telegram_id):
         if (model == await get_model(telegram_id)):
             simbol = "✅"
         kb.button(text=simbol + model, callback_data=CB_MODEL_START + model)
+    kb.button(text=BTN_CANSEL_MODEL, callback_data=CB_CANSEL_MODEL)
     kb.adjust(1)
     return kb.as_markup()
 
