@@ -14,10 +14,11 @@ router = Router()
 @router.message(Command(CMD_MODEL))
 @router.message(F.text == BTN_MODEL)
 async def model_msg(message: Message):
+    inline_kb = await model_inline_kb(message.from_user.id)
     await message.answer("<b>Сменить модель 👾</b>\n\n"
                          "Доступные модели:\n(TODO)",
                          parse_mode=ParseMode.HTML,
-                         reply_markup=model_inline_kb(message.from_user.id))
+                         reply_markup=inline_kb)
 
 
 @router.callback_query(F.data == CB_MODEL)
@@ -33,7 +34,7 @@ async def model_cb(cb: CallbackQuery):
 async def change_model_cb_(cb: CallbackQuery):
     await cb.answer()
     model = cb.split(":")[1]
-    await update_model(model)
+    await update_model(cb.from_user.id, model)
     try:
         await cb.message.delete()
     except TelegramBadRequest:
