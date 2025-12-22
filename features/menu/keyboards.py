@@ -1,4 +1,6 @@
 from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
+from config.test import MODELS
+from database.users import check_premium, get_model
 
 BTN_HELP = "Помощь 🫂"
 BTN_PROFILE = "Посмотреть профиль ℹ️"
@@ -30,6 +32,8 @@ CB_PREMIUM_START = "buy:"
 CB_PREMIUM_31D = "31"
 CB_PREMIUM_365D = "365"
 CB_CANSEL_BILLING = "cansel_billing"
+
+CB_MODEL_START = "change_model:"
 
 def main_reply_kb():
     kb = ReplyKeyboardBuilder()
@@ -69,3 +73,16 @@ def premium_options_inline_kb():
     kb.button(text=BTN_CANSEL_BILLING, callback_data=CB_CANSEL_BILLING)
     kb.adjust(2, 1)
     return kb.as_markup()
+
+async def model_inline_kb(telegram_id):
+    kb = InlineKeyboardBuilder()
+    for (model, model_data) in MODELS:
+        simbol = ""
+        if (not (await check_premium(telegram_id)) and model_data.premium_only):
+            simbol = "🔒"
+        if (model == await get_model(telegram_id)):
+            simbol = "✅"
+        kb.button(text=simbol + model, callback_data=CB_MODEL_START + model)
+    return kb.as_markup()
+
+

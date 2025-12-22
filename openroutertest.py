@@ -6,6 +6,7 @@ import os
 from dotenv import load_dotenv
 from openai import AsyncOpenAI
 from database.users import get_user, update_context
+from config.test import MODELS
 
 load_dotenv("keys/.env")
 
@@ -32,7 +33,7 @@ async def request_stream(telegram_id, text: str):
     messages.append({"role": "user", "content": text})
 
     stream = await client.chat.completions.create(
-        model=user.cur_model,
+        model=MODELS[user.cur_model].openrouter_id,
         messages=messages,
         stream=True,
     )

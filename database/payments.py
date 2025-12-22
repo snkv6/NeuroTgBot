@@ -4,8 +4,8 @@ from database.base import Base, SessionLocal
 from features.menu.keyboards import CB_PREMIUM_31D, CB_PREMIUM_365D
 
 PLANS = {
-    CB_PREMIUM_31D: {"days": 31, "amount": "1"},
-    CB_PREMIUM_365D:   {"days": 365, "amount": "2"},
+    CB_PREMIUM_31D: {"days": 31, "amount": "599"},
+    CB_PREMIUM_365D:   {"days": 365, "amount": "1999"},
 }
 
 class Payment(Base):
