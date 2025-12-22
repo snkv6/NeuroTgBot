@@ -28,6 +28,10 @@ async def role_msg(message: Message, state: FSMContext):
 async def role_cb(cb: CallbackQuery, state: FSMContext):
     await cb.answer()
     await role_msg(cb.message, state=state)
+    try:
+        await cb.message.delete()
+    except TelegramBadRequest:
+        pass
 
 
 @router.callback_query(F.data == CB_CANSEL_ROLE)

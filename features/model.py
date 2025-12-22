@@ -18,7 +18,7 @@ async def model_msg(message: Message, telegram_id=None):
     if telegram_id is None:
         telegram_id = message.from_user.id
     inline_kb = await model_inline_kb(telegram_id)
-    text = "<b>Сменить модель 👾</b>Доступные модели:\n"
+    text = "<b>Сменить модель 👾</b>\n\nДоступные модели:\n"
     premium = await check_premium(telegram_id)
     if premium:
         s_p = "✅"
@@ -33,6 +33,7 @@ async def model_msg(message: Message, telegram_id=None):
         else:
             text = text + f"\t{s_np} Доступно {model_data.free_per_day} запросов без подписки\n"
             text = text + f"\t{s_p} Доступно {model_data.premium_per_day} запросов с подпиской\n"
+        text = text + "\n"
     await message.answer(text,
                          parse_mode=ParseMode.HTML,
                          reply_markup=inline_kb)

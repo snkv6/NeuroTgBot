@@ -83,7 +83,7 @@ async def model_inline_kb(telegram_id):
         if (model == await get_model(telegram_id)):
             simbol = "✅"
         kb.button(text=simbol + model, callback_data=CB_MODEL_START + model)
-    kb.adjust(2)
+    kb.adjust(1)
     return kb.as_markup()
 
 
