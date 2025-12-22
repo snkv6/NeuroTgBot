@@ -171,6 +171,15 @@ async def get_role(telegram_id):
             else:
                 return None
 
+async def get_cnt(telegram_id):
+    async with SessionLocal() as session:
+        async with session.begin():
+            user = await get_user_auxiliary(session, telegram_id)
+            if user:
+                return user.request_cnt
+            else:
+                return 0
+
 #
 # def get_all_tg_ids():
 #     Session = sessionmaker(bind=engine)

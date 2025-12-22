@@ -11,9 +11,9 @@ from features.delete_context import router as delete_context_router
 
 router = Router()
 router.include_router(start_router)
+router.include_router(role_router)
 router.include_router(help_router)
 router.include_router(profile_router)
-router.include_router(role_router)
 router.include_router(model_router)
 router.include_router(billing_router)
 router.include_router(chat_router)
