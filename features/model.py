@@ -30,7 +30,7 @@ async def model_cb(cb: CallbackQuery):
         pass
     await model_msg(cb.message)
 
-@router.callback_query(F.data == CB_MODEL_START)
+@router.callback_query(F.data.startswith(CB_MODEL_START))
 async def change_model_cb_(cb: CallbackQuery):
     await cb.answer()
     model = cb.split(":")[1]
