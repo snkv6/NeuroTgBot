@@ -6,7 +6,8 @@ from aiogram.exceptions import TelegramBadRequest
 
 from features.menu.keyboards import BTN_MODEL, CB_MODEL, CB_MODEL_START, model_inline_kb
 from features.menu.setup import CMD_MODEL
-from database.users import update_model
+from database.users import update_model, check_premium
+from config.test import MODELS
 
 router = Router()
 
@@ -15,8 +16,22 @@ router = Router()
 @router.message(F.text == BTN_MODEL)
 async def model_msg(message: Message):
     inline_kb = await model_inline_kb(message.from_user.id)
-    await message.answer("<b>Сменить модель 👾</b>\n\n"
-                         "Доступные модели:\n(TODO)",
+    text = "<b>Сменить модель 👾</b>Доступные модели:\n"
+    premium = await check_premium(message.from_user.id)
+    if premium:
+        s_p = "✅"
+        s_np = ""
+    else:
+        s_p = "🔒"
+        s_np = "✅"
+    for model, model_data in MODELS.items():
+        text = text + model + ":\n"
+        if model_data.premium_only or premium:
+            text = text + f"\t{s_p} Доступно {model_data.premium_per_day} запросов с подпиской\n"
+        else:
+            text = text + f"\t{s_np} Доступно {model_data.free_per_day} запросов без подписки\n"
+            text = text + f"\t{s_p} Доступно {model_data.premium_per_day} запросов с подпиской\n"
+    await message.answer(text,
                          parse_mode=ParseMode.HTML,
                          reply_markup=inline_kb)
 
@@ -33,10 +48,13 @@ async def model_cb(cb: CallbackQuery):
 @router.callback_query(F.data.startswith(CB_MODEL_START))
 async def change_model_cb_(cb: CallbackQuery):
     await cb.answer()
-    model = cb.split(":")[1]
-    await update_model(cb.from_user.id, model)
-    try:
-        await cb.message.delete()
-    except TelegramBadRequest:
-        pass
-    await cb.answer("Модель изменена")
+    model = cb.data.split(":")[1]
+    if MODELS[model].premium_only and not (await check_premium(model)):
+        await cb.message.answer("Вы не можете выбрать эту модель без подписки")
+    else:
+        await update_model(cb.from_user.id, model)
+        try:
+            await cb.message.delete()
+        except TelegramBadRequest:
+            pass
+        await cb.message.answer("Модель изменена")
