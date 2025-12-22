@@ -1,4 +1,5 @@
 from aiogram import Router, F
+from aiogram.enums import ParseMode
 from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery
 from aiogram.exceptions import TelegramBadRequest
@@ -17,9 +18,10 @@ router = Router()
 @router.message(Command(CMD_BILLING))
 @router.message(F.text == BTN_BILLING)
 async def billing_msg(message: Message):
-    await message.answer("План / оплата 💳\n\n"
-                         "Выберите план подписки",
-                         reply_markup=premium_options_inline_kb())
+    await message.answer("<b>План / оплата 💳</b>\n\n"
+                         "Выберите план подписки:",
+                         reply_markup=premium_options_inline_kb(),
+                         parse_mode=ParseMode.HTML)
 
 
 @router.callback_query(F.data == CB_BILLING)

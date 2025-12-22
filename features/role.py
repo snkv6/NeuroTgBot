@@ -1,4 +1,5 @@
 from aiogram import Router, F
+from aiogram.enums import ParseMode
 from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
@@ -17,10 +18,11 @@ router = Router()
 async def role_msg(message: Message, state: FSMContext):
     await state.set_state(role_form.waiting_text)
     await message.answer(
-        "Выбрать роль 📝\n\n"
+        "<b>Выбрать роль 📝</b>\n\n"
         "Здесь можно выбрать роль, которую будет играть ИИ-агент\n"
         "Чтобы удалить ранее выбранную роль просто нажми на кнопку",
-        reply_markup=special_role_inline_kb()
+        reply_markup=special_role_inline_kb(),
+        parse_mode=ParseMode.HTML
     )
 
 

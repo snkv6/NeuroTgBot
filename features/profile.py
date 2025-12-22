@@ -1,4 +1,5 @@
 from aiogram import Router, F
+from aiogram.enums import ParseMode
 from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery
 from aiogram.exceptions import TelegramBadRequest
@@ -25,10 +26,11 @@ async def profile_msg(message: Message):
     else:
         premium = "нет премиум подписки"
     await message.answer(
-        "Ваш Профиль ℹ️\n\n"
-        f"Роль: {role}\n"
-        f"Модель: {model}\n"
-        f"Подписка: {premium}"
+        "<b>Ваш Профиль ℹ️</b>\n\n"
+        f"<b>Роль</b> 👨: {role}\n\n"
+        f"<b>Модель</b> 👾: {model}\n\n"
+        f"<b>Подписка</b> 💳: {premium}",
+        parse_mode=ParseMode.HTML
     )
 
 

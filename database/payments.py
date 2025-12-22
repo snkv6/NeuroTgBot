@@ -1,10 +1,10 @@
 import uuid
 from sqlalchemy import Column, Integer, String, Boolean
 from database.base import Base, SessionLocal
-from features.menu.keyboards import CB_PREMIUM_30D, CB_PREMIUM_365D
+from features.menu.keyboards import CB_PREMIUM_31D, CB_PREMIUM_365D
 
 PLANS = {
-    CB_PREMIUM_30D: {"days": 30, "amount": "1"},
+    CB_PREMIUM_31D: {"days": 31, "amount": "1"},
     CB_PREMIUM_365D:   {"days": 365, "amount": "2"},
 }
 

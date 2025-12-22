@@ -1,4 +1,5 @@
 from aiogram import Router, F
+from aiogram.enums import ParseMode
 from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery
 from aiogram.exceptions import TelegramBadRequest
@@ -12,7 +13,9 @@ router = Router()
 @router.message(Command(CMD_MODEL))
 @router.message(F.text == BTN_MODEL)
 async def model_msg(message: Message):
-    await message.answer("Сменить модель 👾\n\nДоступные модели:\n(TODO)")
+    await message.answer("<b>Сменить модель 👾</b>\n\n"
+                         "Доступные модели:\n(TODO)",
+                         parse_mode=ParseMode.HTML)
 
 
 @router.callback_query(F.data == CB_MODEL)
