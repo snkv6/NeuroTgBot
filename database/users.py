@@ -23,7 +23,7 @@ class User(Base):
     def __init__(self, telegram_id):
         self.telegram_id = telegram_id
         self.premium_until = datetime(1970, 1, 1)
-        self.cur_model = MODELS.keys()[0]
+        self.cur_model = list(MODELS.keys())[0]
         self.role = None
         self.request_cnt = 0
         self.context = []
