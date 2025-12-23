@@ -8,7 +8,7 @@ from aiogram.exceptions import TelegramBadRequest
 
 from features.menu.keyboards import BTN_MODEL, CB_MODEL, CB_MODEL_START, CB_CANCEL_MODEL, model_inline_kb
 from features.menu.setup import CMD_MODEL
-from database.users import update_model, check_premium
+from database.users import update_model, check_premium, get_model, delete_context
 from config.test import MODELS
 
 router = Router()
@@ -71,16 +71,22 @@ async def change_model_cb_(cb: CallbackQuery):
 
     logger.info("ui_model_selected tg_id=%s plan_id=%s", cb.from_user.id, model)
 
-    if MODELS[model].premium_only and not (await check_premium(tg_id)):
+    verdict = ""
+
+    if MODELS[model].premium_only and not (await check_premium(cb.from_user.id)):
         logger.info("model_change_denied tg_id=%s model=%s reason=no_premium", tg_id, model)
-        await cb.message.answer("Вы не можете выбрать эту модель без подписки")
+        verdict = "Вы не можете выбрать эту модель без подписки"
     else:
-        await update_model(tg_id, model)
+        if MODELS[await get_model(telegram_id=cb.from_user.id)].vendor != MODELS[model].vendor:
+            verdict = " и контекст очищен в связи с переходом на другого вендора"
+            await delete_context(telegram_id=cb.from_user.id)
+        await update_model(cb.from_user.id, model)
         try:
             await cb.message.delete()
         except TelegramBadRequest:
             pass
-        await cb.message.answer("Модель изменена")
+        verdict = "Модель изменена" + verdict
+    await cb.message.answer(verdict)
 
 @router.callback_query(F.data == CB_CANCEL_MODEL)
 async def cancel_model_cb(cb: CallbackQuery):

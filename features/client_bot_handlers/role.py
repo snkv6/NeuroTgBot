@@ -7,7 +7,7 @@ from aiogram.exceptions import TelegramBadRequest
 
 from features.menu.keyboards import BTN_ROLE, CB_ROLE, CB_CANCEL_ROLE, CB_DELETE_ROLE, BTN_TEXTS, special_role_inline_kb
 from features.menu.setup import CMD_ROLE
-from features.states import role_form
+from features.client_bot_handlers.states import role_form
 from database.users import update_role
 
 router = Router()
