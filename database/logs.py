@@ -34,6 +34,10 @@ async def add_log(ts: datetime, level: str, name: str, message: str) -> None:
 
 
 class DBLogHandler(logging.Handler):
+    def __init__(self, loop: asyncio.AbstractEventLoop):
+        super().__init__()
+        self._loop = loop
+
     def emit(self, record: logging.LogRecord) -> None:
         if record.name.startswith(("sqlalchemy", "asyncpg")):
             return
@@ -44,7 +48,8 @@ class DBLogHandler(logging.Handler):
                 level = "warning"
             else :
                 level =  "info"
-            asyncio.create_task(add_log(datetime.fromtimestamp(record.created), level, record.name, self.format(record)))
+            coro = add_log(datetime.fromtimestamp(record.created), level, record.name, self.format(record))
+            asyncio.run_coroutine_threadsafe(coro, self._loop)
 
         except Exception:
             pass

@@ -10,6 +10,7 @@ from database.payments import mark_paid
 from database.users import update_premium
 from features.billing_service.yookassa_configuration import configure_yookassa
 from bot_instance import client_bot
+from features.billing_service import webhook_errors
 
 load_dotenv("keys/.env")
 
