@@ -2,7 +2,7 @@ import logging
 from datetime import datetime, timezone, timedelta
 
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
-from sqlalchemy import Column, Integer, String, Boolean, create_engine, DateTime, select, BigInteger
+from sqlalchemy import Column, Integer, String, Boolean, create_engine, DateTime, select, BigInteger, update
 from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy.types import JSON
@@ -12,9 +12,10 @@ from config.test import MODELS, PREMIUM_CONTEXT_LENGTH
 
 logger = logging.getLogger(__name__)
 
+
 class User(Base):
     __tablename__ = "users"
-    id = Column(Integer, primary_key=True)
+    id = Column(BigInteger, primary_key=True)
     telegram_id = Column(BigInteger, unique=True, nullable=False)
     premium_until = Column(DateTime)
     cur_model = Column(String)
@@ -32,7 +33,6 @@ class User(Base):
 
     # def __repr__(self):
     #     return "<User('%s', '%s', '%s')>" % (self.telegram_id, self.grade, self.messages_recieving)
-
 
 
 async def get_user_auxiliary(session, telegram_id: int) -> User | None:
@@ -73,7 +73,8 @@ async def update_premium(telegram_id, premium_time):
                     user.premium_until = cur_time + timedelta(days=premium_time)
                 else:
                     user.premium_until += timedelta(days=premium_time)
-                logger.info("db_premium_updated tg_id=%s days=%s until=%s", telegram_id, premium_time, user.premium_until)
+                logger.info("db_premium_updated tg_id=%s days=%s until=%s", telegram_id, premium_time,
+                            user.premium_until)
                 return True
             else:
                 return False
@@ -180,6 +181,7 @@ async def get_role(telegram_id):
             else:
                 return None
 
+
 async def get_request_cnt(telegram_id):
     async with SessionLocal() as session:
         async with session.begin():
@@ -189,16 +191,31 @@ async def get_request_cnt(telegram_id):
             else:
                 return 0
 
-#
-# def get_all_tg_ids():
-#     Session = sessionmaker(bind=engine)
-#     session = Session()
-#     data = session.query(User)
-#     session.commit()
-#     return data
 
-# Base.metadata.create_all(engine)
+async def get_all_tg_ids():
+    async with SessionLocal() as session:
+        async with session.begin():
+            query = await session.execute(select(User.telegram_id))
+            return list(query.scalars().all())
 
-# async def init_db():
-#     async with engine.begin() as conn:
-#         await conn.run_sync(Base.metadata.create_all)
+
+async def get_all_premium_users_tg_ids():
+    now = datetime.utcnow()
+    async with SessionLocal() as session:
+        async with session.begin():
+            query = await session.execute(select(User.telegram_id).where((User.premium_until > now)))
+            return list(query.scalars().all())
+
+
+async def get_all_non_premium_users_tg_ids():
+    now = datetime.utcnow()
+    async with SessionLocal() as session:
+        async with session.begin():
+            query = await session.execute(select(User.telegram_id).where((User.premium_until <= now)))
+            return list(query.scalars().all())
+
+
+async def reset_all_request_cnts():
+    async with SessionLocal() as session:
+        async with session.begin():
+            await session.execute(update(User).values(request_cnt=0))

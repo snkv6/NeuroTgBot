@@ -19,10 +19,12 @@ logger = logging.getLogger(__name__)
 
 MESSAGE_SIZE = 3000
 
+
 def to_telegram_html(text: str) -> str:
     safe = html.escape(text)
 
     pattern = re.compile(r"```(\w+)?\n(.*?)```", re.DOTALL)
+
     def repl(m):
         lang = m.group(1) or ""
         code = m.group(2)
@@ -39,24 +41,16 @@ def to_telegram_html(text: str) -> str:
 
 @router.message(StateFilter(None), F.text, ~F.text.startswith("/"), ~F.text.in_(BTN_TEXTS))
 async def chat(message: Message):
-    text = ""
-    flag = True
-    sent = message
-    last_edit = 0.0
-    last_sent_text = ""
-
     logger.info("ui_chat_start tg_id=%s msg_len=%s", message.from_user.id, len(message.text))
 
     try:
+        sent = await message.answer("<code>⏳ Модель обрабатывает ваш запрос. Пожалуйста, подождите немного ...</code>",
+                                    parse_mode=ParseMode.HTML)
+        text = ""
+        last_edit = 0.0
+        last_sent_text = sent.text
         async for part in request_stream(message.chat.id, message.text):
             text += part
-
-            if flag:
-                sent = await message.answer(to_telegram_html(part), parse_mode=ParseMode.HTML)
-                last_edit = 0.0
-                last_sent_text = part
-                flag = False
-                continue
 
             if (time.monotonic() - last_edit) >= 0.7:
                 if len(text) > MESSAGE_SIZE:
