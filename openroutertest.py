@@ -179,6 +179,7 @@ async def request_stream(telegram_id, text: str):
     first_token_at = None
     try:
         async for chunk in stream:
+            chunks += 1
             delta = chunk.choices[0].delta
             part = getattr(delta, "content", None)
             if part:
