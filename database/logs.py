@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 class AppLog(Base):
-    __tablename__ = "app_logs"
+    __tablename__ = "logs"
 
     id = Column(BigInteger, primary_key=True)
     ts = Column(DateTime)

@@ -219,3 +219,4 @@ async def reset_all_request_cnts():
     async with SessionLocal() as session:
         async with session.begin():
             await session.execute(update(User).values(request_cnt=0))
+            logger.info("db_cnt_were_reset")

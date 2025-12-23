@@ -1,6 +1,5 @@
 import asyncio
 import logging
-import os
 
 from dotenv import load_dotenv
 from aiogram import Bot, Dispatcher
@@ -10,11 +9,14 @@ from handlers_router import client_router, admin_router
 from features.menu.setup import setup_bot
 from database.base import init_db
 from features.billing_service.webhook_server import run_webhook_server
-from logger_config import setup_logging
 from bot_instance import client_bot, admin_bot
 from request_cnt_reset import midnight_cnt_reset
+from logger_config import setup_logging
+
 
 load_dotenv("keys/.env")
+
+logger = logging.getLogger(__name__)
 
 
 async def start_client_bot():
@@ -37,12 +39,19 @@ async def main():
     setup_logging()
     await init_db()
 
-    await asyncio.gather(
-        start_client_bot(),
-        start_admin_bot(),
-        run_webhook_server(),
-        midnight_cnt_reset(),
-    )
+    try:
+        logger.info("client_bot_polling_started")
+        logger.info("admin_bot_polling_started")
+        logger.info("webhook server started")
+        await asyncio.gather(
+            start_client_bot(),
+            start_admin_bot(),
+            run_webhook_server(),
+            midnight_cnt_reset(),
+        )
+    except Exception:
+        logger.exception("fatal error in main")
+        raise
 
 
 if __name__ == "__main__":

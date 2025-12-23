@@ -6,6 +6,7 @@ from database.users import reset_all_request_cnts
 logger = logging.getLogger(__name__)
 
 async def midnight_cnt_reset():
+    logger.info("midnight_cnt_reset_started")
     while True:
         now = datetime.utcnow()
 
