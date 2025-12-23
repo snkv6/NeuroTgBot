@@ -1,3 +1,4 @@
+import logging
 from aiogram import Router
 from aiogram.filters import CommandStart
 from aiogram.types import Message
@@ -7,9 +8,12 @@ from database.users import add_user
 
 router = Router()
 
+logger = logging.getLogger(__name__)
+
 @router.message(CommandStart())
 async def start(message: Message):
-    await add_user(message.from_user.id)
+    logger.info("ui_start tg_id=%s", message.from_user.id)
+    created = await add_user(message.from_user.id)
     await message.answer(
         "Привет! Я бот с нейросетями 🤖\n"
         "Напиши запрос обычным текстом — я отвечу.\n",

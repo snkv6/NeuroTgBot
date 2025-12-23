@@ -1,3 +1,4 @@
+import logging
 from aiogram import Router, F
 from aiogram.enums import ParseMode
 from aiogram.filters import Command
@@ -10,11 +11,13 @@ from database.users import get_remaining_premium_days, check_premium, get_model,
 
 router = Router()
 
+logger = logging.getLogger(__name__)
 
 @router.message(Command(CMD_PROFILE))
 @router.message(F.text == BTN_PROFILE)
 async def profile_msg(message: Message):
     tg_id = message.from_user.id
+    logger.info("ui_profile_open tg_id=%s", tg_id)
     role = await get_role(tg_id)
     if role is None:
         role = "нет роли"

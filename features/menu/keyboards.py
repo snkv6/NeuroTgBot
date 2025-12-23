@@ -9,14 +9,14 @@ BTN_MODEL = "Сменить модель 👾"
 BTN_BILLING = "План / оплата 💳"
 BTN_DELETE_CONTEXT = "Удалить текущий контекст 🔄"
 
-BTN_CANSEL_ROLE = "Отмена ❌"
+BTN_CANCEL_ROLE = "Отмена ❌"
 BTN_DELETE_ROLE = "Удалить роль ⛔"
 
 BTN_PREMIUM_30D = "1 месяц за ₽599"
 BTN_PREMIUM_365D = "1 год за ₽1999"
-BTN_CANSEL_BILLING = "Отмена ❌"
+BTN_CANCEL_BILLING = "Отмена ❌"
 
-BTN_CANSEL_MODEL = "Выход ❌"
+BTN_CANCEL_MODEL = "Выход ❌"
 
 BTN_TEXTS = {BTN_HELP, BTN_PROFILE, BTN_ROLE, BTN_MODEL, BTN_BILLING, BTN_DELETE_CONTEXT}
 
@@ -27,16 +27,16 @@ CB_MODEL = "model"
 CB_BILLING = "billing"
 CB_DELETE_CONTEXT = "delete_context"
 
-CB_CANSEL_ROLE = "cansel_role"
+CB_CANCEL_ROLE = "cancel_role"
 CB_DELETE_ROLE = "delete_role"
 
 CB_PREMIUM_START = "buy:"
 CB_PREMIUM_31D = "31"
 CB_PREMIUM_365D = "365"
-CB_CANSEL_BILLING = "cansel_billing"
+CB_CANCEL_BILLING = "cancel_billing"
 
 CB_MODEL_START = "change_model:"
-CB_CANSEL_MODEL = "cansel_model"
+CB_CANCEL_MODEL = "cancel_model"
 
 def main_reply_kb():
     kb = ReplyKeyboardBuilder()
@@ -64,7 +64,7 @@ def actions_inline_kb():
 
 def special_role_inline_kb():
     kb = InlineKeyboardBuilder()
-    kb.button(text=BTN_CANSEL_ROLE, callback_data=CB_CANSEL_ROLE)
+    kb.button(text=BTN_CANCEL_ROLE, callback_data=CB_CANCEL_ROLE)
     kb.button(text=BTN_DELETE_ROLE, callback_data=CB_DELETE_ROLE)
     kb.adjust(2)
     return kb.as_markup()
@@ -73,7 +73,7 @@ def premium_options_inline_kb():
     kb = InlineKeyboardBuilder()
     kb.button(text=BTN_PREMIUM_30D, callback_data=CB_PREMIUM_START+CB_PREMIUM_31D)
     kb.button(text=BTN_PREMIUM_365D, callback_data=CB_PREMIUM_START+CB_PREMIUM_365D)
-    kb.button(text=BTN_CANSEL_BILLING, callback_data=CB_CANSEL_BILLING)
+    kb.button(text=BTN_CANCEL_BILLING, callback_data=CB_CANCEL_BILLING)
     kb.adjust(2, 1)
     return kb.as_markup()
 
@@ -86,7 +86,7 @@ async def model_inline_kb(telegram_id):
         if (model == await get_model(telegram_id)):
             simbol = "✅"
         kb.button(text=simbol + model, callback_data=CB_MODEL_START + model)
-    kb.button(text=BTN_CANSEL_MODEL, callback_data=CB_CANSEL_MODEL)
+    kb.button(text=BTN_CANCEL_MODEL, callback_data=CB_CANCEL_MODEL)
     kb.adjust(1)
     return kb.as_markup()
 

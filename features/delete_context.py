@@ -1,3 +1,4 @@
+import logging
 from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery
@@ -9,18 +10,21 @@ from database.users import delete_context
 
 router = Router()
 
+logger = logging.getLogger(__name__)
+
 @router.message(Command(CMD_DELETE_CONTEXT))
 @router.message(F.text == BTN_DELETE_CONTEXT)
-async def model_msg(message: Message):
+async def delete_context_msg(message: Message):
+    logger.info("ui_delete_context_open tg_id=%s", message.from_user.id)
     await delete_context(message.from_user.id)
     await message.answer("Контекст удален! 🔄")
 
 
 @router.callback_query(F.data == CB_DELETE_CONTEXT)
-async def model_cb(cb: CallbackQuery):
+async def delete_context_cb(cb: CallbackQuery):
     await cb.answer()
     try:
         await cb.message.delete()
     except TelegramBadRequest:
         pass
-    await model_msg(cb.message)
+    await delete_context(cb.message)

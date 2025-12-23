@@ -1,3 +1,4 @@
+import logging
 from aiogram import Router, F
 from aiogram.enums import ParseMode
 from aiogram.filters import Command
@@ -9,10 +10,12 @@ from features.menu.setup import CMD_HELP
 
 router = Router()
 
+logger = logging.getLogger(__name__)
 
 @router.message(Command(CMD_HELP))
 @router.message(F.text == BTN_HELP)
 async def help_msg(message: Message):
+    logger.info("help_open tg_id=%s", message.from_user.id)
     await message.answer(
         "<b>🫂 Помощь</b>\n\n"
         "Я могу помочь с учёбой, кодом и идеями.\n\n"

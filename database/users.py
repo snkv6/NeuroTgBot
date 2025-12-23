@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime, timezone, timedelta
 
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
@@ -9,6 +10,7 @@ from sqlalchemy.types import JSON
 from database.base import Base, SessionLocal
 from config.test import MODELS, PREMIUM_CONTEXT_LENGTH
 
+logger = logging.getLogger(__name__)
 
 class User(Base):
     __tablename__ = "users"
@@ -57,6 +59,7 @@ async def add_user(telegram_id):
                 return False
             else:
                 session.add(User(telegram_id=telegram_id))
+                logger.info("db_user_created tg_id=%s", telegram_id)
                 return True
 
 
@@ -70,6 +73,7 @@ async def update_premium(telegram_id, premium_time):
                     user.premium_until = cur_time + timedelta(days=premium_time)
                 else:
                     user.premium_until += timedelta(days=premium_time)
+                logger.info("db_premium_updated tg_id=%s days=%s until=%s", telegram_id, premium_time, user.premium_until)
                 return True
             else:
                 return False
@@ -81,6 +85,7 @@ async def update_role(telegram_id, role):
             user = await get_user_auxiliary(session, telegram_id)
             if user:
                 user.role = role
+                logger.info("db_role_updated tg_id=%s role_len=%s", telegram_id, len(role or ""))
                 return True
             else:
                 return False
@@ -92,6 +97,7 @@ async def update_model(telegram_id, model):
             user = await get_user_auxiliary(session, telegram_id)
             if user:
                 user.cur_model = model
+                logger.info("db_model_updated tg_id=%s model=%s", telegram_id, model)
                 return True
             else:
                 return False
@@ -127,6 +133,7 @@ async def delete_context(telegram_id):
             user = await get_user_auxiliary(session, telegram_id)
             if user:
                 user.context.clear()
+                logger.info("db_context_deleted tg_id=%s", telegram_id)
                 return True
             else:
                 return False

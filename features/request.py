@@ -1,5 +1,6 @@
 import asyncio
 import time
+import logging
 
 from aiogram import Router, F
 from aiogram.enums import ParseMode
@@ -13,6 +14,8 @@ import re
 import html
 
 router = Router()
+
+logger = logging.getLogger(__name__)
 
 MESSAGE_SIZE = 3000
 
@@ -41,6 +44,8 @@ async def chat(message: Message):
     sent = message
     last_edit = 0.0
     last_sent_text = ""
+
+    logger.info("ui_chat_start tg_id=%s msg_len=%s", message.from_user.id, len(message.text))
 
     try:
         async for part in request_stream(message.chat.id, message.text):
@@ -72,7 +77,7 @@ async def chat(message: Message):
                     last_sent_text = text
                     await sent.edit_text(to_telegram_html(text), parse_mode=ParseMode.HTML)
 
-        await asyncio.sleep(0.7 - time.monotonic() + last_edit)
+        await asyncio.sleep(max(0.0, 0.7 - time.monotonic() + last_edit))
         if len(text) > MESSAGE_SIZE:
             separator = MESSAGE_SIZE
             while separator > 0 and not (
@@ -89,6 +94,8 @@ async def chat(message: Message):
             await sent.edit_text(to_telegram_html(text), parse_mode=ParseMode.HTML)
 
 
-    except Exception as e:
-        await message.answer(f"Произошла ошибка: {e} "
-                             f"Повторите запрос позже или обратитесь к администратору.")
+    except Exception:
+        logger.exception("chat_failed tg_id=%s", message.chat.id)
+        await message.answer(
+            "Произошла ошибка. Повторите запрос позже или обратитесь к администратору."
+        )
