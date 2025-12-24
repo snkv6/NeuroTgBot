@@ -1,7 +1,6 @@
 from aiogram import Router, F
 from aiogram.enums import ParseMode
 from aiogram.filters import Command
-from aiogram.types import Message, CallbackQuery
 from aiogram.exceptions import TelegramBadRequest
 import os
 import logging
@@ -19,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 @router.message(Command(CMD_BILLING))
 @router.message(F.text == BTN_BILLING)
-async def billing_msg(message: Message):
+async def billing_msg(message):
     logger.info("ui_billing_open tg_id=%s", message.from_user.id)
     await message.answer("<b>План / оплата 💳</b>\n\n"
                          "Выберите план подписки:",
@@ -28,7 +27,7 @@ async def billing_msg(message: Message):
 
 
 @router.callback_query(F.data == CB_BILLING)
-async def billing_cb(cb: CallbackQuery):
+async def billing_cb(cb):
     await cb.answer()
     try:
         await cb.message.delete()
@@ -37,7 +36,7 @@ async def billing_cb(cb: CallbackQuery):
     await billing_msg(cb.message)
 
 @router.callback_query(F.data == CB_CANCEL_BILLING)
-async def cancel_billing(cb: CallbackQuery):
+async def cancel_billing(cb):
     logger.info("ui_cancel_billing tg_id=%s", cb.from_user.id)
     await cb.answer("Отменено")
     try:
@@ -46,7 +45,7 @@ async def cancel_billing(cb: CallbackQuery):
         pass
 
 @router.callback_query(F.data.startswith(CB_PREMIUM_START))
-async def buy_plan(cb: CallbackQuery):
+async def buy_plan(cb):
     await cb.answer()
     try:
         await cb.message.delete()

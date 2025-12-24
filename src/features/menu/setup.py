@@ -1,4 +1,3 @@
-from aiogram import Bot
 from aiogram.types import BotCommand, BotCommandScopeDefault, MenuButtonCommands
 
 CMD_START = "start"
@@ -10,7 +9,7 @@ CMD_BILLING = "billing"
 CMD_DELETE_CONTEXT = "delete_context"
 
 
-async def setup_bot(bot: Bot) -> None:
+async def setup_bot(bot) -> None:
     await bot.set_my_commands(
         [
             BotCommand(command=CMD_START, description="Запуск"),

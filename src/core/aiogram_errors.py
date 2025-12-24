@@ -4,7 +4,7 @@ from aiogram.types import ErrorEvent
 
 logger = logging.getLogger(__name__)
 
-def build_error_router() -> Router:
+def build_error_router():
     router = Router()
 
     @router.errors()

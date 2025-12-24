@@ -19,7 +19,7 @@ class AppLog(Base):
     message = Column(Text, nullable=False)
 
 
-def _level(record: logging.LogRecord) -> str:
+def _level(record: logging.LogRecord):
     if record.levelno >= logging.ERROR:
         return "error"
     if record.levelno >= logging.WARNING:
@@ -27,7 +27,7 @@ def _level(record: logging.LogRecord) -> str:
     return "info"
 
 
-async def add_log(ts: datetime, level: str, name: str, message: str) -> None:
+async def add_log(ts: datetime, level, name, message):
     async with SessionLocal() as session:
         async with session.begin():
             session.add(AppLog(ts=ts, level=level, name=name, message=message))
@@ -38,7 +38,7 @@ class DBLogHandler(logging.Handler):
         super().__init__()
         self._loop = loop
 
-    def emit(self, record: logging.LogRecord) -> None:
+    def emit(self, record: logging.LogRecord):
         if record.name.startswith(("sqlalchemy", "asyncpg")):
             return
         try:

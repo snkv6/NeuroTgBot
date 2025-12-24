@@ -1,8 +1,6 @@
 import logging
 from aiogram import Router, F
 from aiogram.filters import Command
-from aiogram.types import Message, CallbackQuery
-from aiogram.fsm.context import FSMContext
 from aiogram.exceptions import TelegramBadRequest
 
 from src.features.menu.keyboards import BTN_ROLE, CB_ROLE, CB_CANCEL_ROLE, CB_DELETE_ROLE, BTN_TEXTS, special_role_inline_kb
@@ -17,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 @router.message(Command(CMD_ROLE))
 @router.message(F.text == BTN_ROLE)
-async def role_msg(message: Message, state: FSMContext):
+async def role_msg(message, state):
     logger.info("ui_role_menu_open tg_id=%s", message.from_user.id)
     await state.set_state(role_form.waiting_text)
     await message.answer(
@@ -29,7 +27,7 @@ async def role_msg(message: Message, state: FSMContext):
 
 
 @router.callback_query(F.data == CB_ROLE)
-async def role_cb(cb: CallbackQuery, state: FSMContext):
+async def role_cb(cb, state):
     await cb.answer()
     await role_msg(cb.message, state=state)
     try:
@@ -39,7 +37,7 @@ async def role_cb(cb: CallbackQuery, state: FSMContext):
 
 
 @router.callback_query(F.data == CB_CANCEL_ROLE)
-async def cancel_setting_role_cb(cb: CallbackQuery, state: FSMContext):
+async def cancel_setting_role_cb(cb, state):
     logger.info("ui_role_cancel tg_id=%s", cb.from_user.id)
     await cb.answer("Отменено")
     await state.clear()
@@ -50,7 +48,7 @@ async def cancel_setting_role_cb(cb: CallbackQuery, state: FSMContext):
 
 
 @router.callback_query(F.data == CB_DELETE_ROLE)
-async def delete_role_cb(cb: CallbackQuery, state: FSMContext):
+async def delete_role_cb(cb, state):
     await state.clear()
     logger.info("ui_role_deleted tg_id=%s", cb.from_user.id)
     await update_role(cb.from_user.id, None)
@@ -61,7 +59,7 @@ async def delete_role_cb(cb: CallbackQuery, state: FSMContext):
         pass
 
 @router.message(role_form.waiting_text, F.text.in_(BTN_TEXTS))
-async def btn_texts_in_role(message: Message, state: FSMContext):
+async def btn_texts_in_role(message, state):
     logger.info("ui_wrong_role tg_id=%s", message.from_user.id)
     await message.answer(
         "Вы не можете выбрать эту роль.\n"
@@ -69,7 +67,7 @@ async def btn_texts_in_role(message: Message, state: FSMContext):
     )
 
 @router.message(role_form.waiting_text, F.text, ~F.text.in_(BTN_TEXTS))
-async def special_handler(message: Message, state: FSMContext):
+async def special_handler(message, state):
     logger.info("ui_role_selected tg_id=%s len=%s", message.from_user.id, len(message.text))
     await state.clear()
     await update_role(message.from_user.id, message.text)

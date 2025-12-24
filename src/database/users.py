@@ -33,12 +33,12 @@ class User(Base):
     #     return "<User('%s', '%s', '%s')>" % (self.telegram_id, self.grade, self.messages_recieving)
 
 
-async def get_user_auxiliary(session, telegram_id: int) -> User | None:
+async def get_user_auxiliary(session, telegram_id):
     query = await session.execute(select(User).where(User.telegram_id == telegram_id))
     return query.scalar_one_or_none()
 
 
-async def get_user(telegram_id: int) -> User | None:
+async def get_user(telegram_id):
     async with SessionLocal() as session:
         async with session.begin():
             query = await session.execute(select(User).where(User.telegram_id == telegram_id))

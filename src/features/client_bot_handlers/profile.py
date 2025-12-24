@@ -2,7 +2,6 @@ import logging
 from aiogram import Router, F
 from aiogram.enums import ParseMode
 from aiogram.filters import Command
-from aiogram.types import Message, CallbackQuery
 from aiogram.exceptions import TelegramBadRequest
 
 from src.features.menu.keyboards import BTN_PROFILE, CB_PROFILE
@@ -15,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 @router.message(Command(CMD_PROFILE))
 @router.message(F.text == BTN_PROFILE)
-async def profile_msg(message: Message):
+async def profile_msg(message):
     tg_id = message.from_user.id
     logger.info("ui_profile_open tg_id=%s", tg_id)
     role = await get_role(tg_id)
@@ -40,7 +39,7 @@ async def profile_msg(message: Message):
 
 
 @router.callback_query(F.data == CB_PROFILE)
-async def profile_cb(cb: CallbackQuery):
+async def profile_cb(cb):
     await cb.answer()
     try:
         await cb.message.delete()

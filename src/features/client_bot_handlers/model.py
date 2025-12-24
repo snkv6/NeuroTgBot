@@ -3,7 +3,6 @@ import logging
 from aiogram import Router, F
 from aiogram.enums import ParseMode
 from aiogram.filters import Command
-from aiogram.types import Message, CallbackQuery
 from aiogram.exceptions import TelegramBadRequest
 
 from src.features.menu.keyboards import BTN_MODEL, CB_MODEL, CB_MODEL_START, CB_CANCEL_MODEL, model_inline_kb
@@ -18,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 @router.message(Command(CMD_MODEL))
 @router.message(F.text == BTN_MODEL)
-async def model_msg(message: Message, telegram_id=None):
+async def model_msg(message, telegram_id=None):
     logger.info("model_menu_open tg_id=%s", telegram_id)
     if telegram_id is None:
         telegram_id = message.from_user.id
@@ -45,7 +44,7 @@ async def model_msg(message: Message, telegram_id=None):
 
 
 @router.callback_query(F.data == CB_MODEL)
-async def model_cb(cb: CallbackQuery):
+async def model_cb(cb):
     await cb.answer()
     try:
         await cb.message.delete()
@@ -54,7 +53,7 @@ async def model_cb(cb: CallbackQuery):
     await model_msg(cb.message, cb.from_user.id)
 
 @router.callback_query(F.data.startswith(CB_MODEL_START))
-async def change_model_cb_(cb: CallbackQuery):
+async def change_model_cb_(cb):
     await cb.answer()
     tg_id = cb.from_user.id
     try:
@@ -89,7 +88,7 @@ async def change_model_cb_(cb: CallbackQuery):
     await cb.message.answer(verdict)
 
 @router.callback_query(F.data == CB_CANCEL_MODEL)
-async def cancel_model_cb(cb: CallbackQuery):
+async def cancel_model_cb(cb):
     logger.info("ui_cancel_model tg_id=%s", cb.from_user.id)
     await cb.answer()
     try:

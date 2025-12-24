@@ -3,7 +3,6 @@ import base64
 from io import BytesIO
 
 from aiogram import Router, F
-from aiogram.types import Message
 
 from src.config.const import MODELS
 from src.database.users import get_model, check_premium
@@ -13,7 +12,7 @@ router = Router()
 logger = logging.getLogger(__name__)
 
 
-async def image_to_base64(message: Message, file_id: str) -> str:
+async def image_to_base64(message, file_id):
     bot = message.bot
 
     tg_file = await bot.get_file(file_id)
@@ -28,7 +27,7 @@ async def image_to_base64(message: Message, file_id: str) -> str:
 
 
 @router.message(F.photo)
-async def image(message: Message):
+async def image(message):
     file_id = message.photo[-1].file_id
 
     logger.info("ui_image_received tg_id=%s file_id=%s", message.from_user.id, file_id)
@@ -37,9 +36,9 @@ async def image(message: Message):
         await message.answer("😢 Эта модель не поддерживает работу с PDF и картинками")
         return
 
-    if not await check_premium(message.from_user.id):
-        await message.answer("💳 Для работы с PDF и картинками необходим премиум")
-        return
+    # if not await check_premium(message.from_user.id):
+    #     await message.answer("💳 Для работы с PDF и картинками необходим премиум")
+    #     return
 
     try:
         image_b64 = await image_to_base64(message, file_id)

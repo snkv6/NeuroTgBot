@@ -5,7 +5,7 @@ import sys
 from src.database.logs import DBLogHandler
 
 
-def setup_logging(loop: asyncio.AbstractEventLoop) -> None:
+def setup_logging(loop: asyncio.AbstractEventLoop):
     fmt_console = "%(asctime)s %(levelname)s %(name)s: %(message)s"
     fmt_db = "%(message)s"
 

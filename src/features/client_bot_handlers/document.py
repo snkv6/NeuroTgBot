@@ -3,7 +3,6 @@ import base64
 from io import BytesIO
 
 from aiogram import Router, F
-from aiogram.types import Message
 from src.services.response_stream import request
 from src.config.const import MODELS
 from src.database.users import get_model, check_premium
@@ -12,7 +11,7 @@ router = Router()
 logger = logging.getLogger(__name__)
 
 
-async def pdf_to_base64(message: Message, file_id: str) -> str:
+async def pdf_to_base64(message, file_id):
     bot = message.bot
     tg_file = await bot.get_file(file_id)
 
@@ -27,7 +26,7 @@ async def pdf_to_base64(message: Message, file_id: str) -> str:
 
 
 @router.message(F.document)
-async def document(message: Message):
+async def document(message):
     doc = message.document
 
     logger.info("ui_pdf_received tg_id=%s file_id=%s name=%s size=%s", message.from_user.id, doc.file_id, doc.file_name,

@@ -1,7 +1,6 @@
 import logging
 from aiogram import Router
 from aiogram.filters import CommandStart
-from aiogram.types import Message
 
 from src.features.menu.keyboards import main_reply_kb, actions_inline_kb
 from src.database.users import add_user
@@ -11,7 +10,7 @@ router = Router()
 logger = logging.getLogger(__name__)
 
 @router.message(CommandStart())
-async def start(message: Message):
+async def start(message):
     logger.info("ui_start tg_id=%s", message.from_user.id)
     created = await add_user(message.from_user.id)
     await message.answer(

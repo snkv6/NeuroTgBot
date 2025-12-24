@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict
 import yaml
 
 
@@ -16,11 +15,11 @@ class Model:
     premium_per_day: int
 
 
-def load_models() -> Dict[str, Model]:
+def load_models():
     path = str(Path(__file__).resolve().parent / "models.yaml")
     data = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
 
-    models: Dict[str, Model] = {}
+    models = {}
     for m in data["models"]:
         model = Model(
             title=m["title"],

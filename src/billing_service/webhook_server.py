@@ -3,7 +3,7 @@ import uvicorn
 
 from src.billing_service.webhook_app import app
 
-async def run_webhook_server() -> None:
+async def run_webhook_server():
     port = int(os.environ.get("PORT", "8000"))
     config = uvicorn.Config(
         app,

@@ -2,7 +2,6 @@ import logging
 from aiogram import Router, F
 from aiogram.enums import ParseMode
 from aiogram.filters import Command
-from aiogram.types import Message, CallbackQuery
 from aiogram.exceptions import TelegramBadRequest
 
 from src.features.menu.keyboards import BTN_HELP, CB_HELP
@@ -14,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 @router.message(Command(CMD_HELP))
 @router.message(F.text == BTN_HELP)
-async def help_msg(message: Message):
+async def help_msg(message):
     logger.info("help_open tg_id=%s", message.from_user.id)
     await message.answer(
         "<b>🫂 Помощь</b>\n\n"
@@ -39,7 +38,7 @@ async def help_msg(message: Message):
 
 
 @router.callback_query(F.data == CB_HELP)
-async def help_cb(cb: CallbackQuery):
+async def help_cb(cb):
     await cb.answer()
     try:
         await cb.message.delete()

@@ -2,8 +2,6 @@ import logging
 import asyncio
 from aiogram import Router, F
 from aiogram.filters import Command
-from aiogram.types import Message, CallbackQuery
-from aiogram.fsm.context import FSMContext
 from aiogram.exceptions import TelegramBadRequest
 
 
@@ -21,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 @router.message(Command(CMD_MESSAGE))
 @router.message(F.text == BTN_MESSAGE)
-async def message_msg(message: Message):
+async def message_msg(message):
     logger.info("admin_message_open tg_id=%s", message.from_user.id)
     await message.answer(
         "Выберите, кому отправить сообщение",
@@ -30,7 +28,7 @@ async def message_msg(message: Message):
 
 
 @router.callback_query(F.data == CB_MESSAGE_CANCEL)
-async def cancel_message_cb(cb: CallbackQuery, state: FSMContext):
+async def cancel_message_cb(cb, state):
     logger.info("admin_message_cancel tg_id=%s", cb.from_user.id)
     await state.clear()
     await cb.answer("Отменено")
@@ -40,7 +38,7 @@ async def cancel_message_cb(cb: CallbackQuery, state: FSMContext):
         pass
 
 @router.callback_query(F.data.startswith(CB_MESSAGE_START))
-async def message_target_cb(cb: CallbackQuery, state: FSMContext):
+async def message_target_cb(cb, state):
     try:
         target = cb.data.split(":")[1]
     except (ValueError, IndexError):
@@ -53,14 +51,14 @@ async def message_target_cb(cb: CallbackQuery, state: FSMContext):
     await cb.message.answer("Введите сообщение")
 
 @router.message(message_form.waiting_text, F.text)
-async def message_text(message: Message, state: FSMContext):
+async def message_text(message, state):
     logger.info("admin_message_written tg_id=%s len=%s", message.from_user.id, len(message.text))
     await state.update_data(message=message.text)
     await message.answer("Превью:\n\n" + message.text, reply_markup=preview_inline_kb())
 
 
 @router.callback_query(message_form.waiting_text, F.data == CB_PREVIEW_CANCEL)
-async def cancel_preview_cb(cb: CallbackQuery, state: FSMContext):
+async def cancel_preview_cb(cb, state):
     logger.info("admin_preview_cancel tg_id=%s", cb.from_user.id)
     await state.update_data(message=None)
     await cb.answer("Отменено")
@@ -71,7 +69,7 @@ async def cancel_preview_cb(cb: CallbackQuery, state: FSMContext):
     await cb.message.answer("Выберите другое сообщение")
 
 @router.callback_query(message_form.waiting_text, F.data == CB_PREVIEW_CONFIRM)
-async def preview_confirm_cb(cb: CallbackQuery, state: FSMContext):
+async def preview_confirm_cb(cb, state):
     data = await state.get_data()
     target = data.get("target")
     message = data.get("message")
