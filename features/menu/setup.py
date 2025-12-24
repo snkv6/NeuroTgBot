@@ -26,7 +26,7 @@ async def setup_bot(bot: Bot) -> None:
     await bot.set_chat_menu_button(menu_button=MenuButtonCommands())
 
     await bot.set_my_short_description(
-        short_description="Я нейробот: отвечаю на вопросы, пишу код, объясняю темы.",
+        short_description="Я нейробот: отвечаю на вопросы, пишу код, объясняю темы.\n\nАдминистратор: @snkv6",
         language_code="ru",
     )
     await bot.set_my_description(

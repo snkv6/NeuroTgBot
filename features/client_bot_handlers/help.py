@@ -32,7 +32,8 @@ async def help_msg(message: Message):
         "/role — выбрать роль помощника\n"
         "/model — выбрать модель\n"
         "/billing — оплата\n"
-        "/delete_context — удалить контекст\n",
+        "/delete_context — удалить контекст\n\n"
+        "Администратор: @snkv6\n",
         parse_mode=ParseMode.HTML
     )
 
