@@ -4,14 +4,16 @@ models:
   - title: "GPT-5 mini"
     openrouter_id: "openai/gpt-5-mini"
     vendor: "OpenAI"
+    file_support: true
     reasoning: false
     premium_only: false
-    free_per_day: 100
+    free_per_day: 50
     premium_per_day: 100
 
   - title: "GPT-5.2"
     openrouter_id: "openai/gpt-5.2"
     vendor: "OpenAI"
+    file_support: true
     reasoning: false
     premium_only: false
     free_per_day: 100
@@ -20,6 +22,7 @@ models:
   - title: "Gemini 3 Flash"
     openrouter_id: "google/gemini-3-flash-preview"
     vendor: "Google"
+    file_support: true
     reasoning: false
     premium_only: false
     free_per_day: 100
@@ -28,6 +31,7 @@ models:
   - title: "Gemini 3 Pro"
     openrouter_id: "google/gemini-3-pro-preview"
     vendor: "Google"
+    file_support: true
     reasoning: false
     premium_only: false
     free_per_day: 100
@@ -36,6 +40,7 @@ models:
   - title: "DeepSeek V3.2"
     openrouter_id: "deepseek/deepseek-v3.2"
     vendor: "DeepSeek"
+    file_support: false
     reasoning: false
     premium_only: false
     free_per_day: 100
@@ -44,6 +49,7 @@ models:
   - title: "DeepSeek V3.2 Thinking"
     openrouter_id: "deepseek/deepseek-v3.2"
     vendor: "DeepSeek"
+    file_support: false
     reasoning: true
     premium_only: false
     free_per_day: 100
@@ -52,6 +58,7 @@ models:
   - title: "Claude 4.5 Sonnet"
     openrouter_id: "anthropic/claude-sonnet-4.5"
     vendor: "Anthropic"
+    file_support: true
     reasoning: false
     premium_only: true
     free_per_day: 100
@@ -60,6 +67,7 @@ models:
   - title: "Claude 4.5 Opus"
     openrouter_id: "anthropic/claude-opus-4.5"
     vendor: "Anthropic"
+    file_support: true
     reasoning: false
     premium_only: true
     free_per_day: 100

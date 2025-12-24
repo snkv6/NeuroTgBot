@@ -1,18 +1,13 @@
-# tngtech/deepseek-r1t-chimera:free
-# gpt-4o-mini
-# nvidia/nemotron-nano-9b-v2:free
-
 import time
 import uuid
 import os
 import logging
 from dotenv import load_dotenv
 from openai import AsyncOpenAI
-from sqlalchemy.util import await_only
 
 from database.users import get_user, update_context, check_premium, update_model, update_request_cnt
 
-from config.test import PREMIUM_CONTEXT_LENGTH, FREE_CONTEXT_LENGTH, MODELS
+from config.const import PREMIUM_CONTEXT_LENGTH, FREE_CONTEXT_LENGTH, MODELS
 
 load_dotenv("keys/.env")
 
@@ -25,69 +20,7 @@ client = AsyncOpenAI(
     base_url="https://openrouter.ai/api/v1",
 )
 
-
-# async def request_stream(telegram_id, text: str):
-#     user = await get_user(telegram_id=telegram_id)
-#     if not user:
-#         return
-#
-#     if MODELS[user.cur_model].premium_only and not await check_premium(user.telegram_id):
-#         # !!!! надо прислать сообщение что у вас закончился премиум и модель изменена на модель по умолчанию, повторите запрос
-#         await update_model(user.telegram_id, list(MODELS.keys())[0])
-#         return
-#
-#     if not await check_premium(user.telegram_id) and MODELS[user.cur_model].free_per_day <= user.request_cnt:
-#         # !!!! надо прислать сообщение
-#         # закончились бесплтаные запросы на данную модель, смените модель (на ту у которй больше запросов), купите премиум или дождитесь сдедующих суток
-#         return
-#
-#     if await check_premium(user.telegram_id) and MODELS[user.cur_model].premium_per_day <= user.request_cnt:
-#         # !!!! надо прислать сообщение
-#         # закончились премиум запросы на данную модель, смените модель (на ту у которй больше запросов) или дождитесь сдедующих суток
-#         return
-#
-#     messages = []
-#
-#     if user.role:
-#         messages.append({"role": "system", "content": user.role})
-#
-#     if await check_premium(user.telegram_id):
-#         context = user.context[-PREMIUM_CONTEXT_LENGTH:]
-#     else:
-#         context = user.context[-FREE_CONTEXT_LENGTH:]
-#
-#     if context:
-#         if context[0]["role"] == "assistant":
-#             messages += context[1:]
-#         else:
-#             messages += context
-#
-#     messages.append({"role": "user", "content": text})
-#
-#     extra_body = None
-#     if MODELS[user.cur_model].reasoning:
-#         extra_body = {"reasoning": {"enabled": True}}
-#
-#     stream = await client.chat.completions.create(
-#         model=MODELS[user.cur_model].openrouter_id,
-#         messages=messages,
-#         stream=True,
-#         extra_body=extra_body,
-#     )
-#
-#     full = []
-#     async for chunk in stream:
-#         delta = chunk.choices[0].delta
-#         part = getattr(delta, "content", None)
-#         if part:
-#             full.append(part)
-#             yield part
-#
-#     await update_context(telegram_id, "user", text)
-#     await update_context(telegram_id, "assistant", "".join(full))
-#     await update_request_cnt(telegram_id)
-
-async def request_stream(telegram_id, text: str):
+async def request_stream(telegram_id, content):
     req_id = uuid.uuid4()
     t0 = time.monotonic()
 
@@ -118,7 +51,7 @@ async def request_stream(telegram_id, text: str):
 
     ctx_items = len(context)
 
-    messages.append({"role": "user", "content": text})
+    messages.append({"role": "user", "content": content})
 
     extra_body = None
     if MODELS[user.cur_model].reasoning:
@@ -181,17 +114,17 @@ async def request_stream(telegram_id, text: str):
         raise
 
     try:
-        await update_context(telegram_id, "user", text)
+        await update_context(telegram_id, "user", content)
         await update_context(telegram_id, "assistant", "".join(full))
         await update_request_cnt(telegram_id)
         logger.info(
-            "llm_persist_ok req_id=%s tg_id=%s",
+            "llm_ctx_ok req_id=%s tg_id=%s",
             req_id, telegram_id
         )
     except Exception:
         logger.exception("context_update_failed tg_id=%s", telegram_id)
         logger.exception(
-            "llm_persist_failed req_id=%s tg_id=%s",
+            "llm_ctx_failed req_id=%s tg_id=%s",
             req_id, telegram_id
         )
 

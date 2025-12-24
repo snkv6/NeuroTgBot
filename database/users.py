@@ -8,14 +8,14 @@ from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy.types import JSON
 
 from database.base import Base, SessionLocal
-from config.test import MODELS, PREMIUM_CONTEXT_LENGTH
+from config.const import MODELS, PREMIUM_CONTEXT_LENGTH
 
 logger = logging.getLogger(__name__)
 
 
 class User(Base):
     __tablename__ = "users"
-    id = Column(BigInteger, primary_key=True)
+    id = Column(Integer, primary_key=True)
     telegram_id = Column(BigInteger, unique=True, nullable=False)
     premium_until = Column(DateTime)
     cur_model = Column(String)
@@ -115,12 +115,12 @@ async def update_request_cnt(telegram_id):
                 return False
 
 
-async def update_context(telegram_id, role, text):
+async def update_context(telegram_id, role, content):
     async with SessionLocal() as session:
         async with session.begin():
             user = await get_user_auxiliary(session, telegram_id)
             if user:
-                user.context = user.context[-PREMIUM_CONTEXT_LENGTH:] + [{"role": role, "content": text}]
+                user.context = user.context[-PREMIUM_CONTEXT_LENGTH:] + [{"role": role, "content": content}]
                 if user.context and user.context[0]["role"] == "assistant":
                     user.context = user.context[1:]
                 return True

@@ -9,6 +9,7 @@ class Model:
     title: str
     openrouter_id: str
     vendor: str
+    file_support: bool
     reasoning: bool
     premium_only: bool
     free_per_day: int
@@ -24,6 +25,7 @@ def load_models1(path: str = "config/models.yaml") -> Dict[str, Model]:
             title=m["title"],
             openrouter_id=m["openrouter_id"],
             vendor=m["vendor"],
+            file_support=bool(m["file_support"]),
             reasoning=bool(m["reasoning"]),
             premium_only=bool(m["premium_only"]),
             free_per_day=int(m["free_per_day"]),

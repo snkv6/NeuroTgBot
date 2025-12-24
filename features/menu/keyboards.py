@@ -1,5 +1,5 @@
 from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
-from config.test import MODELS
+from config.const import MODELS
 from database.users import check_premium, get_model
 
 BTN_HELP = "Помощь 🫂"

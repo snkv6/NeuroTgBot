@@ -25,9 +25,7 @@ async def profile_msg(message: Message):
     cnt = await get_request_cnt(tg_id)
     if model is None:
         model = "нет действующей модели"
-        cnt = ""
-    else:
-        cnt = f", сделано {cnt} запросов"
+        cnt = 0
     if await check_premium(tg_id):
         premium = f"подписка действует еще {await get_remaining_premium_days(tg_id)} д."
     else:
@@ -35,7 +33,8 @@ async def profile_msg(message: Message):
     await message.answer(
         "<b>Ваш Профиль ℹ️</b>\n\n"
         f"<b>Роль</b> 👨: {role}\n\n"
-        f"<b>Модель</b> 👾: {model}{cnt}\n\n"
+        f"<b>Модель</b> 👾: {model}\n\n"
+        f"<b>Сделано запросов</b> 📞: {cnt}\n\n"
         f"<b>Подписка</b> 💳: {premium}",
         parse_mode=ParseMode.HTML
     )
