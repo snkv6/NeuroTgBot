@@ -6,7 +6,7 @@ from aiogram.enums import ParseMode
 from aiogram.types import Message
 
 from openroutertest import request_stream
-from config.const import MODELS
+from config.const import MODELS, EDIT_TIMING, MESSAGE_SIZE
 from database.users import get_user, check_premium, update_model
 
 import re
@@ -14,13 +14,12 @@ import html
 
 logger = logging.getLogger(__name__)
 
-MESSAGE_SIZE = 3000
-
+PATTERN_CODEBLOCK = re.compile(r"```(\w+)?\n(.*?)```", re.DOTALL)
+PATTERN_BOLD = re.compile(r"\*\*(.+?)\*\*")
+PATTERN_INLINE = re.compile(r"`(.+?)`")
 
 def to_telegram_html(text: str) -> str:
-    safe = html.escape(text)
-
-    pattern = re.compile(r"```(\w+)?\n(.*?)```", re.DOTALL)
+    formatted = html.escape(text)
 
     def repl(m):
         lang = m.group(1) or ""
@@ -28,12 +27,10 @@ def to_telegram_html(text: str) -> str:
         lang_attr = f" class='language-{lang}'" if lang else ""
         return f"<pre><code{lang_attr}>{code}</code></pre>"
 
-    safe = pattern.sub(repl, safe)
-
-    safe = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", safe)
-    safe = re.sub(r"`(.+?)`", r"<code>\1</code>", safe)
-
-    return safe
+    formatted = PATTERN_CODEBLOCK.sub(repl, formatted)
+    formatted = PATTERN_BOLD.sub(r"<b>\1</b>", formatted)
+    formatted = PATTERN_INLINE.sub(r"<code>\1</code>", formatted)
+    return formatted
 
 
 async def checks(message: Message):
@@ -71,7 +68,7 @@ async def request(message: Message, content):
         async for part in request_stream(message.chat.id, content):
             text += part
 
-            if (time.monotonic() - last_edit) >= 0.7:
+            if (time.monotonic() - last_edit) >= EDIT_TIMING:
                 if len(text) > MESSAGE_SIZE:
                     separator = MESSAGE_SIZE
                     while separator > 0 and not (
@@ -82,7 +79,7 @@ async def request(message: Message, content):
                         separator = MESSAGE_SIZE
                     await sent.edit_text(to_telegram_html(text[:separator]), parse_mode=ParseMode.HTML)
                     text = text[separator + 1:]
-                    await asyncio.sleep(0.7)
+                    await asyncio.sleep(EDIT_TIMING)
                     sent = await message.answer(to_telegram_html(text), parse_mode=ParseMode.HTML)
                     last_sent_text = text
                 elif text != last_sent_text:
@@ -90,7 +87,7 @@ async def request(message: Message, content):
                     last_sent_text = text
                     await sent.edit_text(to_telegram_html(text), parse_mode=ParseMode.HTML)
 
-        await asyncio.sleep(max(0.0, 0.7 - time.monotonic() + last_edit))
+        await asyncio.sleep(max(0.0, EDIT_TIMING - time.monotonic() + last_edit))
         if len(text) > MESSAGE_SIZE:
             separator = MESSAGE_SIZE
             while separator > 0 and not (
@@ -101,7 +98,7 @@ async def request(message: Message, content):
                 separator = MESSAGE_SIZE
             await sent.edit_text(to_telegram_html(text[:separator]), parse_mode=ParseMode.HTML)
             text = text[separator + 1:]
-            await asyncio.sleep(0.7)
+            await asyncio.sleep(EDIT_TIMING)
             await message.answer(to_telegram_html(text), parse_mode=ParseMode.HTML)
         elif text != last_sent_text:
             await sent.edit_text(to_telegram_html(text), parse_mode=ParseMode.HTML)

@@ -88,7 +88,7 @@ async def request_stream(telegram_id, content):
         )
         raise
 
-    full = []
+    response = []
     chunks = 0
     out_len = 0
     first_token_at = None
@@ -104,7 +104,7 @@ async def request_stream(telegram_id, content):
                         "llm_first_token req_id=%s tg_id=%s ttft_ms=%s",
                         req_id, telegram_id, int((first_token_at - t0) * 1000)
                     )
-                full.append(part)
+                response.append(part)
                 yield part
     except Exception:
         logger.exception(
@@ -115,7 +115,7 @@ async def request_stream(telegram_id, content):
 
     try:
         await update_context(telegram_id, "user", content)
-        await update_context(telegram_id, "assistant", "".join(full))
+        await update_context(telegram_id, "assistant", "".join(response))
         await update_request_cnt(telegram_id)
         logger.info(
             "llm_ctx_ok req_id=%s tg_id=%s",

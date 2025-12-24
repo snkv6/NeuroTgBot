@@ -25,7 +25,6 @@ async def profile_msg(message: Message):
     cnt = await get_request_cnt(tg_id)
     if model is None:
         model = "нет действующей модели"
-        cnt = 0
     if await check_premium(tg_id):
         premium = f"подписка действует еще {await get_remaining_premium_days(tg_id)} д."
     else:

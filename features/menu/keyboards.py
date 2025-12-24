@@ -80,12 +80,12 @@ def premium_options_inline_kb():
 async def model_inline_kb(telegram_id):
     kb = InlineKeyboardBuilder()
     for model, model_data in MODELS.items():
-        simbol = ""
+        symbol = ""
         if (not (await check_premium(telegram_id)) and model_data.premium_only):
-            simbol = "🔒"
+            symbol = "🔒"
         if (model == await get_model(telegram_id)):
-            simbol = "✅"
-        kb.button(text=simbol + model, callback_data=CB_MODEL_START + model)
+            symbol = "✅"
+        kb.button(text=symbol + model, callback_data=CB_MODEL_START + model)
     kb.button(text=BTN_CANCEL_MODEL, callback_data=CB_CANCEL_MODEL)
     kb.adjust(1)
     return kb.as_markup()
