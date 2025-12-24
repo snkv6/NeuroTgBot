@@ -77,11 +77,11 @@ async def preview_confirm_cb(cb: CallbackQuery, state: FSMContext):
     message = data.get("message")
     await state.clear()
     if target == CB_MESSAGE_ALL:
-        ids = get_all_tg_ids()
+        ids = await get_all_tg_ids()
     elif target == CB_MESSAGE_PREMIUM:
-        ids = get_all_premium_users_tg_ids()
+        ids = await get_all_premium_users_tg_ids()
     elif target == CB_MESSAGE_NON_PREMIUM:
-        ids = get_all_non_premium_users_tg_ids()
+        ids = await get_all_non_premium_users_tg_ids()
     else:
         logger.warning("admin_unknown_target tg_id=%s target=%s data=%r", cb.from_user.id, target, cb.data)
         await cb.message.answer("Попробуйте еще раз")
@@ -96,9 +96,9 @@ async def preview_confirm_cb(cb: CallbackQuery, state: FSMContext):
     failed = 0
     for id in ids:
         try:
-            sent += 1
             await client_bot.send_message(id, message)
             await asyncio.sleep(0.05)
+            sent += 1
         except Exception:
             failed += 1
             logger.warning("admin_wrong_target target_id=%s tg_id=%s", id, cb.from_user.id)
