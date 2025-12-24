@@ -11,8 +11,9 @@ from features.client_bot_handlers.text import router as text_router
 from features.client_bot_handlers.image import router as photo_router
 from features.client_bot_handlers.document import router as document_router
 
-
-from features.admin_bot_handlers.admin_handler import router as test_router
+from features.admin_bot_handlers.admin_start import router as admin_start_router
+from features.admin_bot_handlers.admin_message import router as admin_message_router
+from features.admin_bot_handlers.admin_stat import router as admin_stat_router
 
 client_router = Router()
 client_router.include_router(start_router)
@@ -27,5 +28,6 @@ client_router.include_router(photo_router)
 client_router.include_router(document_router)
 
 admin_router = Router()
-
-admin_router.include_router(test_router)
+admin_router.include_router(admin_start_router)
+admin_router.include_router(admin_message_router)
+admin_router.include_router(admin_stat_router)

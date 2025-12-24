@@ -5,7 +5,7 @@ CMD_STAT = "stat"
 CMD_MESSAGE = "message"
 
 
-async def setup_bot(bot: Bot) -> None:
+async def admin_setup_bot(bot: Bot) -> None:
     await bot.set_my_commands(
         [
             BotCommand(command=CMD_STAT, description="Статистика"),
