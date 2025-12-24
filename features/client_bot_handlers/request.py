@@ -9,6 +9,8 @@ from aiogram.types import Message
 
 from openroutertest import request_stream
 from features.menu.keyboards import BTN_TEXTS
+from config.test import MODELS
+from database.users import get_user, check_premium, update_model
 
 import re
 import html
@@ -38,10 +40,30 @@ def to_telegram_html(text: str) -> str:
 
     return safe
 
+async def checks(message: Message):
+    user = await get_user(message.from_user.id)
+    premium = await check_premium(message.from_user.id)
+    model = MODELS[user.cur_model]
+    if model.premium_only and not premium:
+        await update_model(user.telegram_id, list(MODELS.keys())[0])
+        logger.info("llm_skip_premium_model tg_id=%s model=%s", message.from_user.id, user.cur_model)
+        await message.answer(f"Ваша подписка закончилась, поэтому модель была изменена на {model}")
+        return False
+
+    if (not premium and model.free_per_day <= user.request_cnt) or (premium and model.premium_per_day <= user.request_cnt):
+        logger.info("llm_skip_limit tg_id=%s model=%s cnt=%s", message.from_user.id, user.cur_model, user.request_cnt)
+        await message.answer("У вас закончились запросы к этой модели, выберите другую или попробуйте завтра")
+        return False
+
+    return True
+
 
 @router.message(StateFilter(None), F.text, ~F.text.startswith("/"), ~F.text.in_(BTN_TEXTS))
 async def chat(message: Message):
     logger.info("ui_chat_start tg_id=%s msg_len=%s", message.from_user.id, len(message.text))
+
+    if not await checks(message):
+        return
 
     try:
         sent = await message.answer("<code>⏳ Модель обрабатывает ваш запрос. Пожалуйста, подождите немного ...</code>",

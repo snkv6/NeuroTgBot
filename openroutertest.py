@@ -96,24 +96,6 @@ async def request_stream(telegram_id, text: str):
         logger.info("llm_skip_user_not_found tg_id=%s", telegram_id)
         return
 
-    if MODELS[user.cur_model].premium_only and not await check_premium(user.telegram_id):
-        # !!!! надо прислать сообщение что у вас закончился премиум и модель изменена на модель по умолчанию, повторите запрос
-        await update_model(user.telegram_id, list(MODELS.keys())[0])
-        logger.info("llm_skip_premium_model tg_id=%s model=%s", telegram_id, user.cur_model)
-        return
-
-    if not await check_premium(user.telegram_id) and MODELS[user.cur_model].free_per_day <= user.request_cnt:
-        # !!!! надо прислать сообщение
-        # закончились бесплтаные запросы на данную модель, смените модель (на ту у которй больше запросов), купите премиум или дождитесь сдедующих суток
-        logger.info("llm_skip_free_limit tg_id=%s model=%s cnt=%s", telegram_id, user.cur_model, user.request_cnt)
-        return
-
-    if await check_premium(user.telegram_id) and MODELS[user.cur_model].premium_per_day <= user.request_cnt:
-        # !!!! надо прислать сообщение
-        # закончились премиум запросы на данную модель, смените модель (на ту у которй больше запросов) или дождитесь сдедующих суток
-        logger.info("llm_skip_premium_limit tg_id=%s model=%s cnt=%s", telegram_id, user.cur_model, user.request_cnt)
-        return
-
     messages = []
 
     has_role = False
