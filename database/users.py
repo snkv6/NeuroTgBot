@@ -2,7 +2,7 @@ import logging
 from datetime import datetime, timezone, timedelta
 
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
-from sqlalchemy import Column, Integer, String, Boolean, create_engine, DateTime, select, BigInteger, update
+from sqlalchemy import Column, Integer, String, Boolean, create_engine, DateTime, select, BigInteger, update, select, func
 from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy.types import JSON
@@ -120,7 +120,7 @@ async def update_context(telegram_id, role, content):
         async with session.begin():
             user = await get_user_auxiliary(session, telegram_id)
             if user:
-                user.context = user.context[-PREMIUM_CONTEXT_LENGTH:] + [{"role": role, "content": content}]
+                user.context = (user.context + [{"role": role, "content": content}])[-PREMIUM_CONTEXT_LENGTH:]
                 if user.context and user.context[0]["role"] == "assistant":
                     user.context = user.context[1:]
                 return True
@@ -220,3 +220,16 @@ async def reset_all_request_cnts():
         async with session.begin():
             await session.execute(update(User).values(request_cnt=0))
             logger.info("db_cnt_were_reset")
+
+async def get_total_users_count():
+    async with SessionLocal() as session:
+        async with session.begin():
+            return await session.scalar(select(func.count()).select_from(User))
+
+async def get_premium_users_count():
+    now = datetime.utcnow()
+    async with SessionLocal() as session:
+        async with session.begin():
+            return await session.scalar(
+                select(func.count()).select_from(User).where(User.premium_until > now)
+            )

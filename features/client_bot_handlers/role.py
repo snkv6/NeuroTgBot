@@ -7,7 +7,7 @@ from aiogram.exceptions import TelegramBadRequest
 
 from features.menu.keyboards import BTN_ROLE, CB_ROLE, CB_CANCEL_ROLE, CB_DELETE_ROLE, BTN_TEXTS, special_role_inline_kb
 from features.menu.setup import CMD_ROLE
-from features.client_bot_handlers.states import role_form
+from features.menu.states import role_form
 from database.users import update_role
 
 router = Router()
@@ -70,7 +70,7 @@ async def btn_texts_in_role(message: Message, state: FSMContext):
 
 @router.message(role_form.waiting_text, F.text, ~F.text.in_(BTN_TEXTS))
 async def special_handler(message: Message, state: FSMContext):
-    logger.info("ui_model_selected tg_id=%s len=%s", message.from_user.id, len(message.text))
+    logger.info("ui_role_selected tg_id=%s len=%s", message.from_user.id, len(message.text))
     await state.clear()
     await update_role(message.from_user.id, message.text)
     await message.answer("Роль выбрана!")

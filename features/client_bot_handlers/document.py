@@ -31,7 +31,7 @@ async def pdf_to_base64(message: Message, file_id: str) -> str:
 async def document(message: Message):
     doc = message.document
 
-    logger.info("pdf_received tg_id=%s file_id=%s name=%s size=%s", message.from_user.id, doc.file_id, doc.file_name,
+    logger.info("ui_pdf_received tg_id=%s file_id=%s name=%s size=%s", message.from_user.id, doc.file_id, doc.file_name,
                 doc.file_size)
 
     if doc.mime_type != "application/pdf":

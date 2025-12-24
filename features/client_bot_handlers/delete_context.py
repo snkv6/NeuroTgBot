@@ -27,4 +27,4 @@ async def delete_context_cb(cb: CallbackQuery):
         await cb.message.delete()
     except TelegramBadRequest:
         pass
-    await delete_context(cb.message)
+    await delete_context_msg(cb.message)

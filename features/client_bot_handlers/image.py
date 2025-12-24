@@ -32,7 +32,7 @@ async def image_to_base64(message: Message, file_id: str) -> str:
 async def image(message: Message):
     file_id = message.photo[-1].file_id
 
-    logger.info("image_received tg_id=%s file_id=%s", message.from_user.id, file_id)
+    logger.info("ui_image_received tg_id=%s file_id=%s", message.from_user.id, file_id)
 
     if not MODELS[await get_model(message.from_user.id)].file_support:
         await message.answer("😢 Эта модель не поддерживает работу с PDF и картинками")

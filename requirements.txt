@@ -7,3 +7,4 @@ aiosqlite
 yookassa
 openai
 asyncpg
+greenlet
