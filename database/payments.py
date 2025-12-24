@@ -1,6 +1,5 @@
 import logging
-import uuid
-from sqlalchemy import Column, Integer, String, Boolean, BigInteger
+from sqlalchemy import Column, Integer, String, Boolean
 from database.base import Base, SessionLocal
 from features.menu.keyboards import CB_PREMIUM_31D, CB_PREMIUM_365D
 

@@ -1,9 +1,7 @@
 import logging
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta
 
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
-from sqlalchemy import Column, Integer, String, Boolean, create_engine, DateTime, select, BigInteger, update, select, func
-from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy import Column, Integer, String, DateTime, BigInteger, update, select, func
 from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy.types import JSON
 
