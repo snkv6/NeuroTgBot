@@ -16,7 +16,8 @@ class Model:
     premium_per_day: int
 
 
-def load_models(path: str = "/Users/stepankarlov/PycharmProjects/NeuroTgBot/NeuroTgBot/src/config/models.yaml") -> Dict[str, Model]:
+def load_models() -> Dict[str, Model]:
+    path = str(Path(__file__).resolve().parent / "models.yaml")
     data = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
 
     models: Dict[str, Model] = {}
