@@ -2,7 +2,7 @@ import asyncio
 import logging
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from dotenv import load_dotenv
 from yookassa import Payment
 
@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 
 @app.post("/yookassa/webhook")
-async def yookassa_webhook(request):
+async def yookassa_webhook(request: Request):
     logger.info("received_request")
     try:
         body = await request.json()
