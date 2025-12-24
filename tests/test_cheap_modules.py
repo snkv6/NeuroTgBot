@@ -72,7 +72,6 @@ def test_setup_logging_calls_basicConfig_and_uses_DBLogHandler(monkeypatch):
     def fake_basicConfig(**kwargs):
         captured["basicConfig_kwargs"] = kwargs
 
-    # правильные подмены:
     monkeypatch.setattr(logging, "StreamHandler", TestConsoleHandler)
     monkeypatch.setattr(lc, "DBLogHandler", TestDBHandler)
     monkeypatch.setattr(logging, "basicConfig", fake_basicConfig)
