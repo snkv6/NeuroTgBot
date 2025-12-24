@@ -15,7 +15,7 @@ PLANS = {
 class Payment(Base):
     __tablename__ = "payments"
 
-    order_id = Column(BigInteger, primary_key=True)
+    order_id = Column(Integer, primary_key=True)
     telegram_id = Column(Integer, nullable=False, index=True)
     plan_id = Column(String, nullable=False)
     provider = Column(String, nullable=False)

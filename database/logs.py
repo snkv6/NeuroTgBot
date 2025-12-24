@@ -2,7 +2,7 @@ import asyncio
 import logging
 from datetime import datetime, timezone
 
-from sqlalchemy import Column, BigInteger, DateTime, String, Text
+from sqlalchemy import Column, Integer, DateTime, String, Text
 
 from database.base import Base, SessionLocal
 
@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 class AppLog(Base):
     __tablename__ = "logs"
 
-    id = Column(BigInteger, primary_key=True)
+    id = Column(Integer, primary_key=True)
     ts = Column(DateTime)
     level = Column(String, nullable=False)
     name = Column(String, nullable=False)

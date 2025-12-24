@@ -59,7 +59,7 @@ async def change_model_cb_(cb: CallbackQuery):
     tg_id = cb.from_user.id
     try:
         model = cb.data.split(":")[1]
-    except ValueError:
+    except (ValueError, IndexError):
         logger.warning("bad_callback tg_id=%s data=%r", tg_id, cb.data)
         await cb.message.answer("❌ Кнопка устарела. Откройте меню моделей заново.")
         return
@@ -90,7 +90,7 @@ async def change_model_cb_(cb: CallbackQuery):
 
 @router.callback_query(F.data == CB_CANCEL_MODEL)
 async def cancel_model_cb(cb: CallbackQuery):
-    logger.info("ui_canсel_model tg_id=%s", cb.from_user.id)
+    logger.info("ui_cancel_model tg_id=%s", cb.from_user.id)
     await cb.answer()
     try:
         await cb.message.delete()
