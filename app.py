@@ -12,7 +12,7 @@ from database.base import init_db
 from bot_instance import client_bot, admin_bot
 from request_cnt_reset import midnight_cnt_reset
 from logger_config import setup_logging
-from aiogram_errors import router as error_router
+from aiogram_errors import build_error_router
 from features.billing_service.webhook_server import run_webhook_server
 from features.menu.admin_setup import admin_setup_bot
 
@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 async def start_client_bot():
     client_dp = Dispatcher(storage=MemoryStorage())
     client_dp.include_router(client_router)
-    client_dp.include_router(error_router)
+    client_dp.include_router(build_error_router())
 
     await setup_bot(client_bot)
     await client_dp.start_polling(client_bot)
@@ -34,7 +34,7 @@ async def start_client_bot():
 async def start_admin_bot():
     admin_dp = Dispatcher(storage=MemoryStorage())
     admin_dp.include_router(admin_router)
-    admin_dp.include_router(error_router)
+    admin_dp.include_router(build_error_router())
 
     await admin_setup_bot(admin_bot)
     await admin_dp.start_polling(admin_bot)
