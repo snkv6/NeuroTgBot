@@ -96,9 +96,9 @@ async def preview_confirm_cb(cb: CallbackQuery, state: FSMContext):
     failed = 0
     for id in ids:
         try:
-            sent += 1
             await client_bot.send_message(id, message)
             await asyncio.sleep(0.05)
+            sent += 1
         except Exception:
             failed += 1
             logger.warning("admin_wrong_target target_id=%s tg_id=%s", id, cb.from_user.id)
