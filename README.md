@@ -1,5 +1,11 @@
 # `Телеграм бот с LLM - Помогатор`
 
+### ссылки
+
+@llm_hse_bot
+
+@llm_hse_admin_bot
+
 ```mermaid
 flowchart TD
     A[Пользователь] -->|управление ботом| F[keyboards]
@@ -21,6 +27,69 @@ flowchart TD
 
 # Структура проекта:
     
+    NeuroTgBot/
+    ├── data/
+    │   └── database.db
+    │
+    ├── keys/
+    │   └── .env
+    │
+    ├── src/
+    │   ├── billing_service/
+    │   │   ├── __init__.py
+    │   │   ├── billing.py
+    │   │   └── tariffs.py
+    │   │
+    │   ├── config/
+    │   │   ├── __init__.py
+    │   │   ├── bot.py
+    │   │   ├── logging.py
+    │   │   └── settings.py
+    │   │
+    │   ├── core/
+    │   │   ├── __init__.py
+    │   │   ├── dispatcher.py
+    │   │   ├── middlewares.py
+    │   │   └── states.py
+    │   │
+    │   ├── database/
+    │   │   ├── __init__.py
+    │   │   ├── base.py
+    │   │   ├── models.py
+    │   │   └── session.py
+    │   │
+    │   ├── features/
+    │   │   ├── admin_bot_handlers/
+    │   │   │   ├── __init__.py
+    │   │   │   ├── admin_menu.py
+    │   │   │   └── statistics.py
+    │   │   │
+    │   │   ├── client_bot_handlers/
+    │   │   │   ├── __init__.py
+    │   │   │   ├── start.py
+    │   │   │   └── subscription.py
+    │   │   │
+    │   │   └── menu/
+    │   │       ├── __init__.py
+    │   │       └── keyboards.py
+    │   │
+    │   ├── jobs/
+    │   │   ├── __init__.py
+    │   │   └── request_cnt_reset.py
+    │   │
+    │   └── services/
+    │       ├── __init__.py
+    │       ├── api_request.py
+    │       └── response_stream.py
+    │
+    └── tests/
+        ├── conftest.py
+        ├── test_admin_bot.py
+        ├── test_bd.py
+        ├── test_cheap_modules.py
+        ├── test_client_handlers.py
+        └── test_webhook_app.py
+
 
 # Что видит пользователь:
 
