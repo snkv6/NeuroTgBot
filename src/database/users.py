@@ -6,7 +6,7 @@ from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy.types import JSON
 
 from src.database.base import Base, SessionLocal
-from src.config import MODELS, PREMIUM_CONTEXT_LENGTH
+from src.config.const import MODELS, PREMIUM_CONTEXT_LENGTH
 
 logger = logging.getLogger(__name__)
 

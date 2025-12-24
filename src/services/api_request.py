@@ -2,14 +2,17 @@ import time
 import uuid
 import os
 import logging
+from pathlib import Path
+
 from dotenv import load_dotenv
 from openai import AsyncOpenAI
 
 from src.database.users import get_user, update_context, check_premium, update_request_cnt
 
-from src.config import PREMIUM_CONTEXT_LENGTH, FREE_CONTEXT_LENGTH, MODELS
+from src.config.const import PREMIUM_CONTEXT_LENGTH, FREE_CONTEXT_LENGTH, MODELS
 
-load_dotenv("../../keys/.env")
+BASE_DIR = Path(__file__).resolve().parents[2]
+load_dotenv(BASE_DIR / "keys" / ".env")
 
 key = os.getenv("OPENROUTER_API_KEY")
 

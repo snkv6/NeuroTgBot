@@ -1,6 +1,6 @@
-from src.config.load_models import load_models1
+from src.config.Models_loading import load_models
 
-MODELS = load_models1()
+MODELS = load_models()
 
 PREMIUM_CONTEXT_LENGTH = 14
 FREE_CONTEXT_LENGTH = 7

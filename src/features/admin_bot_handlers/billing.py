@@ -8,8 +8,8 @@ import logging
 import asyncio
 from yookassa import Payment
 
-from src.features.menu import BTN_BILLING, CB_BILLING, CB_PREMIUM_START, CB_CANCEL_BILLING, premium_options_inline_kb
-from src.features.menu import CMD_BILLING
+from src.features.menu.keyboards import BTN_BILLING, CB_BILLING, CB_PREMIUM_START, CB_CANCEL_BILLING, premium_options_inline_kb
+from src.features.menu.setup import CMD_BILLING
 from src.billing_service.yookassa_configuration import configure_yookassa
 from src.database.payments import create_payment_order, attach_provider_payment_id, PLANS
 

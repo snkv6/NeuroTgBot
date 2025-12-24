@@ -5,7 +5,7 @@ from io import BytesIO
 from aiogram import Router, F
 from aiogram.types import Message
 from src.services.response_stream import request
-from src.config import MODELS
+from src.config.const import MODELS
 from src.database.users import get_model, check_premium
 
 router = Router()

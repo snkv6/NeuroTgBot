@@ -1,13 +1,18 @@
 import os
+from pathlib import Path
 
 from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy.orm import declarative_base
 
-# DB_PATH = Path(__file__).resolve().parent / "database.db"
+# BASE_DIR = Path(__file__).resolve().parents[2]
+# DB_PATH = BASE_DIR / "data" / "database.db"
 # DATABASE_URL = f"sqlite+aiosqlite:///{DB_PATH}"
+#
+# load_dotenv(BASE_DIR / "keys" / ".env")
 
 load_dotenv("../../keys/.env")
+#
 DATABASE_URL = os.getenv("DATABASE_URL_R")
 DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://")
 
