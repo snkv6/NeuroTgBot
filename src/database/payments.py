@@ -1,5 +1,4 @@
 import logging
-import uuid
 from sqlalchemy import Column, Integer, String, Boolean
 from src.database.base import Base, SessionLocal
 from src.features.menu.keyboards import CB_PREMIUM_31D, CB_PREMIUM_365D
@@ -15,7 +14,7 @@ PLANS = {
 class Payment(Base):
     __tablename__ = "payments"
 
-    order_id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    order_id = Column(Integer, primary_key=True, autoincrement=True)
     telegram_id = Column(Integer, nullable=False, index=True)
     plan_id = Column(String, nullable=False)
     provider = Column(String, nullable=False)
