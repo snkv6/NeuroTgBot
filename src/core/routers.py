@@ -5,7 +5,7 @@ from src.features.client_bot_handlers.help import router as help_router
 from src.features.client_bot_handlers.profile import router as profile_router
 from src.features.client_bot_handlers.role import router as role_router
 from src.features.client_bot_handlers.model import router as model_router
-from src.features.admin_bot_handlers.billing import router as billing_router
+from src.features.client_bot_handlers.billing import router as billing_router
 from src.features.client_bot_handlers.delete_context import router as delete_context_router
 from src.features.client_bot_handlers.text import router as text_router
 from src.features.client_bot_handlers.image import router as photo_router
