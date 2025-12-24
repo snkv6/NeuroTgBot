@@ -37,11 +37,9 @@ async def _init_test_db():
     except Exception:
         pass
 
-    import database.base as db_base
+    from src import database as db_base
 
-    import database.logs  # noqa: F401
-    import database.payments  # noqa: F401
-    import database.users  # noqa: F401
+    import src.database.logs  # noqa: F401
 
     async with db_base.engine.begin() as conn:
         await conn.run_sync(db_base.Base.metadata.create_all)

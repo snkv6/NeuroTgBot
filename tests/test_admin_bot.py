@@ -12,7 +12,7 @@ def _inline_callbacks(markup):
 
 
 def test_admin_main_reply_kb_has_required_buttons():
-    from features.menu import admin_keyboards as ak
+    from src.features.menu import admin_keyboards as ak
 
     kb = ak.main_reply_kb()
     texts = _reply_texts(kb)
@@ -22,7 +22,7 @@ def test_admin_main_reply_kb_has_required_buttons():
 
 
 def test_admin_message_inline_kb_has_targets_and_cancel():
-    from features.menu import admin_keyboards as ak
+    from src.features.menu import admin_keyboards as ak
 
     kb = ak.message_inline_kb()
     cbs = _inline_callbacks(kb)
@@ -37,7 +37,7 @@ def test_admin_message_inline_kb_has_targets_and_cancel():
 
 
 def test_admin_preview_inline_kb_has_confirm_and_cancel():
-    from features.menu import admin_keyboards as ak
+    from src.features.menu import admin_keyboards as ak
 
     kb = ak.preview_inline_kb()
     cbs = _inline_callbacks(kb)

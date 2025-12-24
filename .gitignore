@@ -1,6 +1,6 @@
 __pycache__/
 *.pyc
-database/database.db
+data/database.db
 keys/.env*
 .DS_Store
 **/.DS_Store

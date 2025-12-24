@@ -8,9 +8,9 @@ from unittest.mock import AsyncMock
 import pytest
 
 def test_load_models_returns_dict_and_models_are_parsed():
-    from config.load_models import load_models1, Model
+    from src.config import load_models1, Model
 
-    yaml_path = Path("config/models.yaml")
+    yaml_path = Path("../src/config/models.yaml")
     models = load_models1(str(yaml_path))
 
     assert isinstance(models, dict)
@@ -29,7 +29,7 @@ def test_load_models_returns_dict_and_models_are_parsed():
 
 @pytest.mark.asyncio
 async def test_setup_bot_calls_aiogram_bot_methods():
-    from features.menu import setup
+    from src.features.menu import setup
 
     bot = pytest.importorskip("aiogram").Bot
 
@@ -50,7 +50,7 @@ async def test_setup_bot_calls_aiogram_bot_methods():
 
 
 def test_setup_logging_calls_basicConfig_and_uses_DBLogHandler(monkeypatch):
-    import logger_config as lc
+    from src.core import logger_config as lc
 
     captured = {}
 

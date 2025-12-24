@@ -11,7 +11,7 @@ from sqlalchemy import select
 
 @pytest.mark.asyncio
 async def test_users_crud_and_missing_branches():
-    import database.users as users
+    from src import database as users
 
     telegram_id = 100_001
     missing_id = 999_999_999
@@ -48,7 +48,7 @@ async def test_users_crud_and_missing_branches():
 
 @pytest.mark.asyncio
 async def test_users_context_trim_and_delete():
-    import database.users as users
+    from src import database as users
 
     telegram_id = 100_002
     missing_id = 999_999_998
@@ -76,7 +76,7 @@ async def test_users_context_trim_and_delete():
 
 @pytest.mark.asyncio
 async def test_users_premium_lists_and_reset_counters():
-    import database.users as users
+    from src import database as users
 
     premium_id = 100_003
     free_id = 100_004
@@ -118,7 +118,7 @@ async def test_users_premium_lists_and_reset_counters():
 
 @pytest.mark.asyncio
 async def test_payments_flow_create_attach_mark_paid_and_missing():
-    from database.payments import attach_provider_payment_id, create_payment_order, mark_paid
+    from src.database.payments import attach_provider_payment_id, create_payment_order, mark_paid
 
     telegram_id = 200_001
     missing_order_id = 999_999_999
@@ -147,8 +147,8 @@ async def test_payments_flow_create_attach_mark_paid_and_missing():
 
 @pytest.mark.asyncio
 async def test_logs_add_log_and_db_log_handler_emit(monkeypatch):
-    from database.base import SessionLocal
-    from database.logs import AppLog, DBLogHandler, _level, add_log
+    from src.database.base import SessionLocal
+    from src.database import AppLog, DBLogHandler, _level, add_log
 
     await add_log(datetime.utcnow(), "info", "unit_test", "hello")
 

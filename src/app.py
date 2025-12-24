@@ -1,0 +1,62 @@
+import asyncio
+import logging
+
+from dotenv import load_dotenv
+from aiogram import Dispatcher
+from aiogram.fsm.storage.memory import MemoryStorage
+
+from src.core.routers import client_router, admin_router
+from src.features.menu.setup import setup_bot
+from src.database.base import init_db
+from src.core.bot_instance import client_bot, admin_bot
+from src.jobs.request_cnt_reset import midnight_cnt_reset
+from src.core.logger_config import setup_logging
+from src.core.aiogram_errors import build_error_router
+from src.billing_service.webhook_server import run_webhook_server
+from src.features.menu.admin_setup import admin_setup_bot
+
+
+load_dotenv("../keys/.env")
+
+logger = logging.getLogger(__name__)
+
+
+async def start_client_bot():
+    client_dp = Dispatcher(storage=MemoryStorage())
+    client_dp.include_router(client_router)
+    client_dp.include_router(build_error_router())
+
+    await setup_bot(client_bot)
+    await client_dp.start_polling(client_bot)
+
+
+async def start_admin_bot():
+    admin_dp = Dispatcher(storage=MemoryStorage())
+    admin_dp.include_router(admin_router)
+    admin_dp.include_router(build_error_router())
+
+    await admin_setup_bot(admin_bot)
+    await admin_dp.start_polling(admin_bot)
+
+
+async def main():
+    setup_logging(asyncio.get_running_loop())
+    await init_db()
+
+    try:
+        logger.info("client_bot_polling_started")
+        logger.info("admin_bot_polling_started")
+        logger.info("webhook server started")
+        await asyncio.gather(
+            start_client_bot(),
+            start_admin_bot(),
+            run_webhook_server(),
+            midnight_cnt_reset(),
+        )
+    except Exception:
+        logger.exception("fatal error in main")
+        raise
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
