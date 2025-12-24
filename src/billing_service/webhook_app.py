@@ -50,7 +50,7 @@ async def yookassa_webhook(request: Request):
         return {"ok": True}
 
     metadata = getattr(payment_resp, "metadata", None) or {}
-    order_id = int(metadata.get("order_id"))
+    order_id = metadata.get("order_id")
     if not order_id:
         return {"ok": True}
 
