@@ -21,6 +21,7 @@ logger = logging.getLogger(__name__)
 
 @app.post("/yookassa/webhook")
 async def yookassa_webhook(request: Request):
+    logger.info("received_request")
     try:
         body = await request.json()
     except Exception:
