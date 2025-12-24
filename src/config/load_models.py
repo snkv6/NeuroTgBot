@@ -16,7 +16,7 @@ class Model:
     premium_per_day: int
 
 
-def load_models1(path: str = "config/models.yaml") -> Dict[str, Model]:
+def load_models1(path: str = "src/config/models.yaml") -> Dict[str, Model]:
     data = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
 
     models: Dict[str, Model] = {}
