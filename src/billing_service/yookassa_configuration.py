@@ -1,6 +1,11 @@
 import os
+from pathlib import Path
+
+from dotenv import load_dotenv
 from yookassa import Configuration
 
+BASE_DIR = Path(__file__).resolve().parents[2]
+load_dotenv(BASE_DIR / "keys" / ".env")
 
 async def configure_yookassa():
     shop_id = os.getenv("YOOKASSA_SHOP_ID")

@@ -1,5 +1,6 @@
 import asyncio
 import logging
+from pathlib import Path
 
 from fastapi import FastAPI, Request
 from dotenv import load_dotenv
@@ -12,7 +13,8 @@ from src.core.bot_instance import client_bot
 
 app = FastAPI()
 
-load_dotenv("../../keys/.env")
+BASE_DIR = Path(__file__).resolve().parents[2]
+load_dotenv(BASE_DIR / "keys" / ".env")
 
 logger = logging.getLogger(__name__)
 
