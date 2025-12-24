@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+
+.git/
+.vscode/
+.idea/
+
+__MACOSX/
+.DS_Store
+
+keys/.env
+.env

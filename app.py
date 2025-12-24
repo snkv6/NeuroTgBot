@@ -25,7 +25,6 @@ async def start_client_bot():
     client_dp = Dispatcher(storage=MemoryStorage())
     client_dp.include_router(client_router)
     client_dp.include_router(client_error_router)
-    client_dp.include_router(admin_router)
 
     await setup_bot(client_bot)
     await client_dp.start_polling(client_bot)
