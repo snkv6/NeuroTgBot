@@ -8,11 +8,6 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-
-# ----------------------------
-# Fakes (Message / Callback / FSM)
-# ----------------------------
-
 class FakeUser:
     def __init__(self, user_id: int):
         self.id = user_id
@@ -60,20 +55,9 @@ class FakeFSMContext:
         self.clear = AsyncMock()
 
 
-# ----------------------------
-# Import helper with stubs
-# ----------------------------
-
 @pytest.fixture()
 def stubs(monkeypatch):
-    """
-    Стабим внешние зависимости ДО импорта handler-модулей:
-      - database.users
-      - features.menu.keyboards
-      - openroutertest (request_stream)
-    """
 
-    # --- database.users ---
     users_mod = types.ModuleType("database.users")
     users_mod.add_user = AsyncMock(return_value=True)
     users_mod.delete_context = AsyncMock(return_value=True)
@@ -90,7 +74,6 @@ def stubs(monkeypatch):
 
     monkeypatch.setitem(sys.modules, "database.users", users_mod)
 
-    # --- features.menu.keyboards ---
     kb_mod = types.ModuleType("features.menu.keyboards")
 
     kb_mod.BTN_HELP = "HELP_BTN"
@@ -112,7 +95,6 @@ def stubs(monkeypatch):
     kb_mod.BTN_DELETE_CONTEXT = "DEL_CTX_BTN"
     kb_mod.CB_DELETE_CONTEXT = "del_ctx_cb"
 
-    # эти кнопки запрещены как "роль" в role.py
     kb_mod.BTN_TEXTS = [
         kb_mod.BTN_HELP,
         kb_mod.BTN_PROFILE,
@@ -132,12 +114,11 @@ def stubs(monkeypatch):
 
     monkeypatch.setitem(sys.modules, "features.menu.keyboards", kb_mod)
 
-    # --- openroutertest.request_stream ---
     openrouter_mod = types.ModuleType("openroutertest")
 
     async def _empty_stream(_chat_id: int, _text: str):
         if False:
-            yield ""  # pragma: no cover
+            yield
 
     openrouter_mod.request_stream = _empty_stream
     monkeypatch.setitem(sys.modules, "openroutertest", openrouter_mod)
@@ -156,10 +137,6 @@ def import_fresh(stubs):
 
     return _import
 
-
-# ----------------------------
-# start.py
-# ----------------------------
 
 @pytest.mark.asyncio
 async def test_start_sends_two_messages_and_calls_add_user(import_fresh, stubs):
@@ -181,10 +158,6 @@ async def test_start_sends_two_messages_and_calls_add_user(import_fresh, stubs):
     assert second_call.kwargs["reply_markup"] == "ACTIONS_INLINE_KB"
 
 
-# ----------------------------
-# help.py
-# ----------------------------
-
 @pytest.mark.asyncio
 async def test_help_msg_answers_html(import_fresh):
     mod = import_fresh("features.client_bot_handlers.help")
@@ -203,7 +176,6 @@ async def test_help_msg_answers_html(import_fresh):
 async def test_help_cb_deletes_message_and_calls_help(import_fresh, monkeypatch):
     mod = import_fresh("features.client_bot_handlers.help")
 
-    # чтобы не зависеть от реального конструктора TelegramBadRequest
     class DummyBadRequest(Exception):
         pass
 
@@ -238,10 +210,6 @@ async def test_help_cb_ignores_bad_request_on_delete(import_fresh, monkeypatch):
     msg.answer.assert_awaited_once()
 
 
-# ----------------------------
-# profile.py
-# ----------------------------
-
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
     "role, model, cnt, premium, days, expected_parts",
@@ -270,9 +238,6 @@ async def test_profile_msg_renders_fields(import_fresh, stubs, role, model, cnt,
     assert mod.ParseMode.HTML == msg.answer.await_args.kwargs["parse_mode"]
 
 
-# ----------------------------
-# role.py
-# ----------------------------
 
 @pytest.mark.asyncio
 async def test_role_msg_sets_state_and_sends_menu(import_fresh):
@@ -349,15 +314,10 @@ async def test_special_handler_sets_role_and_clears_state(import_fresh, stubs):
     assert msg.answer.await_args.args[0] == "Роль выбрана!"
 
 
-# ----------------------------
-# model.py
-# ----------------------------
-
 @pytest.mark.asyncio
 async def test_model_msg_builds_text_and_uses_inline_kb(import_fresh, stubs, monkeypatch):
     mod = import_fresh("features.client_bot_handlers.model")
 
-    # Делаем маленький MODELS, чтобы текст был предсказуемым
     mod.MODELS = {
         "FreeModel": SimpleNamespace(premium_only=False, free_per_day=1, premium_per_day=10, vendor="V1"),
         "PremModel": SimpleNamespace(premium_only=True, free_per_day=0, premium_per_day=10, vendor="V2"),
@@ -379,7 +339,6 @@ async def test_model_msg_builds_text_and_uses_inline_kb(import_fresh, stubs, mon
 async def test_change_model_cb_bad_callback_shows_stale_button(import_fresh, monkeypatch):
     mod = import_fresh("features.client_bot_handlers.model")
 
-    # мокнем MODELS и зависимости (чтобы не дошло до них)
     mod.MODELS = {"A": SimpleNamespace(premium_only=False, vendor="V", free_per_day=1, premium_per_day=1)}
     monkeypatch.setattr(mod, "check_premium", AsyncMock(return_value=True), raising=True)
 
@@ -459,10 +418,6 @@ async def test_change_model_cb_vendor_change_clears_context(import_fresh, monkey
     assert "контекст очищен" in ans
 
 
-# ----------------------------
-# delete_context.py
-# ----------------------------
-
 @pytest.mark.asyncio
 async def test_delete_context_msg_deletes_and_answers(import_fresh, stubs):
     mod = import_fresh("features.client_bot_handlers.delete_context")
@@ -491,7 +446,6 @@ async def test_delete_context_cb_calls_delete_context_msg(import_fresh, stubs, m
 
     cb.answer.assert_awaited_once()
     msg.delete.assert_awaited_once()
-    # ожидаем, что именно telegram_id уйдет в delete_context
     stubs.users.delete_context.assert_awaited_once_with(51)
     msg.answer.assert_awaited_once()
 
@@ -541,19 +495,15 @@ async def test_checks_denies_premium_only_model_without_premium(import_fresh, mo
 async def test_request_simple_stream_edits_message(import_fresh, monkeypatch):
     mod = import_fresh("features.client_bot_handlers.request")
 
-    # checks -> True
     monkeypatch.setattr(mod, "checks", AsyncMock(return_value=True), raising=True)
 
-    # stream -> "hi"
     async def stream(_chat_id: int, _content):
         yield "hi"
 
     monkeypatch.setattr(mod, "request_stream", stream, raising=True)
 
-    # не спим в тестах
     monkeypatch.setattr(mod.asyncio, "sleep", AsyncMock(), raising=True)
 
-    # чтобы (time.monotonic() - last_edit) >= 0.7 точно сработало
     t = {"v": 0.0}
     def monotonic():
         t["v"] += 1.0
@@ -563,23 +513,21 @@ async def test_request_simple_stream_edits_message(import_fresh, monkeypatch):
 
     msg = FakeMessage(user_id=1, chat_id=100, text="hello")
 
-    # ловим sent, который возвращает message.answer(...)
     sent_holder = {}
 
     async def answer_side_effect(text: str, **_kwargs):
         sent = FakeSentMessage(text=text)
-        sent_holder.setdefault("sent", sent)  # первый ответ (⏳)
+        sent_holder.setdefault("sent", sent)
         return sent
 
     msg.answer = AsyncMock(side_effect=answer_side_effect)
 
     await mod.request(msg, [{"type": "text", "text": "hello"}])
 
-    # 1) сначала "⏳ ..."
+
     assert msg.answer.await_count >= 1
     assert "⏳" in msg.answer.await_args_list[0].args[0]
 
-    # 2) потом edit_text на "hi"
     sent = sent_holder["sent"]
     sent.edit_text.assert_awaited()
     assert "hi" in sent.text

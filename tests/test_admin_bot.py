@@ -2,12 +2,10 @@ import pytest
 
 
 def _reply_texts(markup):
-    # ReplyKeyboardMarkup.keyboard -> list[list[KeyboardButton]]
     return [btn.text for row in getattr(markup, "keyboard", []) for btn in row]
 
 
 def _inline_callbacks(markup):
-    # InlineKeyboardMarkup.inline_keyboard -> list[list[InlineKeyboardButton]]
     return [btn.callback_data for row in getattr(markup, "inline_keyboard", []) for btn in row]
 
 
@@ -27,7 +25,6 @@ def test_admin_message_inline_kb_has_targets_and_cancel():
     kb = ak.message_inline_kb()
     cbs = _inline_callbacks(kb)
 
-    # должно быть что-то вроде: "message_start:all" / "...:premium" / "...:non_premium"
     assert any(cb == ak.CB_MESSAGE_CANCEL for cb in cbs)
     assert any(cb.startswith(ak.CB_MESSAGE_START + ":") for cb in cbs)
 
@@ -86,10 +83,6 @@ class FakeState:
 
 @pytest.fixture()
 def import_admin(monkeypatch):
-    """
-    Стабим bot_instance.client_bot (чтобы импорт admin_message не тянул реального бота)
-    и даём способ импортить модули заново.
-    """
     bot_instance = types.ModuleType("bot_instance")
     bot_instance.client_bot = SimpleNamespace(send_message=AsyncMock())
     monkeypatch.setitem(sys.modules, "bot_instance", bot_instance)
@@ -105,7 +98,6 @@ def import_admin(monkeypatch):
 async def test_admin_start_sends_main_kb(import_admin, monkeypatch):
     mod = import_admin("admin_bot_handlers.admin_start")
 
-    # подменим main_reply_kb на маркер, чтобы проверить что он реально используется
     monkeypatch.setattr(mod, "main_reply_kb", lambda: "ADMIN_MAIN_KB", raising=True)
 
     msg = FakeMessage(user_id=10)
@@ -179,11 +171,9 @@ async def test_admin_message_target_sets_state_and_data(import_admin):
 async def test_admin_preview_confirm_sends_messages(import_admin, monkeypatch):
     mod = import_admin("admin_bot_handlers.admin_message")
 
-    # IMPORTANT: эти функции должны быть await-нуты в коде (иначе тест упадёт)
     monkeypatch.setattr(mod, "get_all_tg_ids", AsyncMock(return_value=[101, 102]), raising=True)
     monkeypatch.setattr(mod, "asyncio", SimpleNamespace(sleep=AsyncMock()), raising=True)
 
-    # бот уже стабнут в фикстуре import_admin: mod.client_bot.send_message
     mod.client_bot.send_message = AsyncMock()
 
     state = FakeState()

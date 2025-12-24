@@ -12,32 +12,23 @@ import pytest_asyncio
 
 @pytest_asyncio.fixture()
 async def webhook_app_module(monkeypatch):
-    """Import webhook_app with external deps stubbed (yookassa + bot_instance).
 
-    This keeps the tests deterministic and independent from network / real tokens.
-    """
-
-    # --- Stub yookassa so both webhook_app and yookassa_configuration can import it ---
     yookassa_mod = types.ModuleType("yookassa")
 
-    class Configuration:  # noqa: D401
-        """Minimal stub."""
-
+    class Configuration:
         account_id = None
         secret_key = None
 
-    class Payment:  # noqa: D401
-        """Minimal stub."""
+    class Payment:
 
         @staticmethod
-        def find_one(_payment_id: str):  # pragma: no cover
+        def find_one(_payment_id: str):
             raise RuntimeError("Payment.find_one is not configured in the test")
 
     yookassa_mod.Configuration = Configuration
     yookassa_mod.Payment = Payment
     monkeypatch.setitem(sys.modules, "yookassa", yookassa_mod)
 
-    # --- Stub bot_instance.client_bot used by webhook_app ---
     bot_instance_mod = types.ModuleType("bot_instance")
     fake_bot = SimpleNamespace(
         send_message=AsyncMock(),
@@ -46,12 +37,11 @@ async def webhook_app_module(monkeypatch):
     bot_instance_mod.client_bot = fake_bot
     monkeypatch.setitem(sys.modules, "bot_instance", bot_instance_mod)
 
-    # Ensure clean import (important if tests are re-run in the same interpreter).
+
     sys.modules.pop("features.billing_service.webhook_app", None)
 
     mod = importlib.import_module("features.billing_service.webhook_app")
 
-    # Make asyncio.to_thread run inline (faster + deterministic).
     async def _direct_to_thread(fn, *args, **kwargs):
         return fn(*args, **kwargs)
 
@@ -78,7 +68,6 @@ async def test_webhook_app_root(http_client):
 
 @pytest.mark.asyncio
 async def test_yookassa_webhook_bad_json_returns_ok_false(webhook_app_module, http_client, monkeypatch):
-    # make sure we *would* notice accidental external calls
     monkeypatch.setattr(webhook_app_module, "configure_yookassa", AsyncMock())
     monkeypatch.setattr(webhook_app_module, "mark_paid", AsyncMock())
     monkeypatch.setattr(webhook_app_module, "update_premium", AsyncMock())
@@ -123,7 +112,6 @@ async def test_yookassa_webhook_returns_ok_false_when_fetch_fails(webhook_app_mo
     monkeypatch.setattr(webhook_app_module, "mark_paid", AsyncMock())
     monkeypatch.setattr(webhook_app_module, "update_premium", AsyncMock())
 
-    # Fail on the "fetch" stage
     monkeypatch.setattr(webhook_app_module, "configure_yookassa", AsyncMock(side_effect=RuntimeError("boom")))
 
     resp = await http_client.post(

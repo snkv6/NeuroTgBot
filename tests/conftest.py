@@ -1,4 +1,3 @@
-# tests/conftest.py
 from __future__ import annotations
 
 import os
@@ -39,7 +38,7 @@ async def _init_test_db():
 
     from src import database as db_base
 
-    import src.database.logs  # noqa: F401
+    import src.database.logs
 
     async with db_base.engine.begin() as conn:
         await conn.run_sync(db_base.Base.metadata.create_all)
